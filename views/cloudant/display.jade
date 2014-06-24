@@ -1,0 +1,15 @@
+html
+	include ../head
+	body
+		span #{msg}
+	h2 #{patient} information
+	- each x in data 
+		ul
+			li rs : #{x.rs}
+			li ls : #{x.ls}
+			li ss : #{x.ss}
+			li su : #{x.su}
+			li sd : #{x.sd}
+			li tn : #{x.tn}
+			li time: #{x.time}
+			li timestamp : #{x.timestamp}

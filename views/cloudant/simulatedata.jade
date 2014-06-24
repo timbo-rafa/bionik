@@ -1,0 +1,30 @@
+html
+	include ../head
+	body
+		h3 Stub page that attempts to insert the following data to the database
+		span #{msg}
+		div
+			form(action='/cloudant/postsimulateddata', method='post')
+				div#patientnamediv(data-role='fieldcontain')
+					label(for='patientname') Patient Name
+						input(id='patientname', type='text', value='raf', placeholder='Patient Name', name='patientname')
+				div#lsdiv(data-role='fieldcontain')
+					label(for='ls') ls
+						input(id='ls',type='number',value='0', placeholder='Number of left steps', name='ls')
+				div#rsdiv(data-role='fieldcontain')
+					label(for='rs') rs
+						input(id='rs',type='number',value='0',placeholder='Number of right steps',name='rs')
+				div#ssdiv(data-role='fieldcontain')
+					label(for='ss') ss
+						input(id='ss',type='number', value='0', placeholder='Number of steps', name='ss')
+				div#sudiv(data-role='fieldcontain')
+					label(for='su') su
+						input(id='su',type='number', value='0', placeholder='Number of su', name='su')
+				div#sddiv(data-role='fieldcontain')
+					label(for='sd') sd
+						input(id='sd',type='number', value='0', placeholder='Number of sd', name='sd')
+				div#tndiv(data-role='fieldcontain')
+					label(for='tn') tn
+						input(id='tn', type='datetime', value='0', placeholder='tn', name='tn')
+				div(data-role='fieldcontain')   
+					input(type='submit',value='Create db for this pacient',data-transition='fade', data-theme='c')

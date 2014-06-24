@@ -1,0 +1,13 @@
+//- index.jade
+//- This file defines the view of this app.
+
+doctype html
+html
+	include head
+	//include body
+	body
+		span #{msg}
+		p
+			a#cloudantcreatedb(href='/cloudant/simulatedata') Create a Patient's database on cloudant or insert data into a patient's database
+		p
+			a#querydata(href='/cloudant/query') Query data from Cloudant
