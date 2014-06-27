@@ -1,33 +1,67 @@
 //state variables
 
+// not used (yet?)
 var SPAN = {
 	HOURLY :{ value: 0, name: "Hourly"},
 	DAILY  :{ value: 1, name: "Daily" },
 	WEEKLY :{ value: 2, name: "Weekly"},
 	MONTHLY:{ value: 3, name: "Monthly"},
-	YEARLY :{ value: 4, name: "Yearly"}
+	YEARLY :{ value: 4, name: "Yearly"/*, func: isSameTimePeriodYearly */},
+	ONESPAN:{ value: 5, name: "Onespan"}
 };
+
 if (Object.freeze) Object.freeze(SPAN);
 
-var timespan = SPAN.MONTHLY;
+var MONTHNAME = [];
+
+MONTHNAME.push("January");
+MONTHNAME.push("February");
+MONTHNAME.push("March");
+MONTHNAME.push("April");
+MONTHNAME.push("May");
+MONTHNAME.push("June");
+MONTHNAME.push("July");
+MONTHNAME.push("August");
+MONTHNAME.push("September");
+MONTHNAME.push("October");
+MONTHNAME.push("November");
+MONTHNAME.push("December");
+if (Object.freeze) Object.freeze(MONTHNAME);
 
 var config = {
 	showAll: true,
 	showAction: "ss",
+	timePeriod: SPAN.YEARLY, //not used up to now
 	method: "sum",
 	startTime: new Date(0),
-	endTime  : new Date()
+	endTime  : new Date(),
+	//getPeriod;
+	//methodCall;
+	//isSameTimePeriod;
 };
 
+var getPeriodYearly = function(date) {
+	return date.getFullYear().toString();
+};
+
+var getPeriodMonthly = function(date) {
+	return MONTHNAME[date.getMonth()] + ', ' + getPeriodYearly(date);
+};
+
+var getPeriodDaily = function(date) {
+	return date.getDate() + ', ' + getPeriodMonthly(date);
+};
 //internal functions
 
 var constructDisplayObject = function(doc) {
+	var objectDate = new Date(doc.doc.timestamp);
 	displayObject = {
 		action: "sum",
 		tn: 0, // is tn conditional?
 		ndocs: 0,
-		timestamp: new Date(),
-		timespan: new Date(doc.doc.timestamp).getTime(),
+		period: config.getPeriod(objectDate),
+		timestamp: objectDate,
+		time: objectDate.getTime(),
 		newesttimestamp: new Date(0),
 		oldesttimestamp: new Date()
 	};
@@ -38,51 +72,76 @@ var constructDisplayObject = function(doc) {
 		displayObject.ss = 0;
 		displayObject.su = 0;
 		displayObject.sd = 0;
+	// only set the keys that are gonna be used, not all
 	} else {
 		displayObject[config.showAction] = 0;
 	}
 	return displayObject;
 };
 
-var sum = function(displayObject,singledoc, a) {
+var sum = function(displayObject, singledoc, a) {
+	//console.log('---sum---');
+	//console.log(displayObject);
+	//console.log(singledoc);
+	//console.log(a);
 	displayObject[a] += parseInt(singledoc.doc[a],10);
 };
-config.methodCall = sum;
 
-var isSameTimeSpanYearly = function(displayObject, singledoc) {
-	//Update this when you have appropriate docs in the cloud to the commented code
-	//docTime = Number(singledoc.doc.timespan);
-	//displayObjectTime = Number(displayObject.timespan);
-	docTime = new Date(singledoc.doc.timestamp);
-	displayObjectTime = new Date(displayObject.timestamp);
-
-	return docTime.getFullYear() === displayObjectTime.getFullYear();
-}
-
-/* variable that will dynamically hold the function to evaluate if the incoming doc is on the
- * same timespan as the previous answer or not ( we should then generate a new displayObject to
- * plot a new graphic
- */
-var isSameTimeSpan = function(displayObject, singledoc) {
-	return isSameTimeSpanYearly(singledoc);
-}
-
-/* function that decides what calculation will be made (with the step variables)
- * and calls the appropriate function
- */
-var applyMethod = function(displayObject, singledoc, a) {
-	
-	if (isSameTimeSpan(displayObject, singledoc))
-		config.methodCall(displayObject, singledoc, a);
-	else
-		//begin another graphic
-		config.methodCall(constructDisplayObject(), singledoc, a);
+var isSameTimePeriodYearly = function(displayObject, singledoc) {
+	return singledoc.doc.date.getFullYear() === displayObject.date.getFullYear();
 };
 
+var isSameTimePeriodMonthly = function(displayObject, singledoc) {
+	var isSamePeriodYearly = isSameTimePeriodYearly(displayObject, singledoc);
+
+	return ( isSamePeriodYearly &&
+		( singledoc.doc.date.getMonth() === displayObject.date.getMonth() )
+	);
+};
+
+var isSameTimePeriodDaily = function(displayObject, singledoc) {
+	var isSamePeriodMonthly = isSameTimePeriodMonthly(displayObject, singledoc);
+
+	return ( isSamePeriodMonthly &&
+		( singledoc.doc.date.getDate() === displayObject.date.getDate() )
+	);
+};
+
+/* variable that will dynamically hold the function to evaluate if the incoming doc is on the
+ * same timeperiod as the previous answer or not ( we should then generate a new displayObject to
+ * plot a new graphic
+ */
+
+/* function that decides what calculation will be made (with the step variables)
+ * and calls the appropriate function using the appropriate configs
+ */
+var applyMethod = function(displayObject, singledoc, a) {
+
+	var ret = undefined;
+	displayObject.date = new Date(displayObject.timestamp);
+	singledoc.doc.date = new Date(singledoc.doc.timestamp);
+
+	if (config.isSameTimePeriod(displayObject, singledoc)) {
+		config.methodCall(displayObject, singledoc, a);
+	} else {
+		//begin another graphic
+		ret = constructDisplayObject(singledoc);
+		config.methodCall(ret, singledoc, a);
+	}
+	return ret;
+};
+
+var defaultConfiguration = function() {
+	config.getPeriod = getPeriodDaily;
+	config.methodCall = sum;
+	config.isSameTimePeriod = isSameTimePeriodDaily;
+};
 
 // Calculate the sum from all the step variables
 var process = function(alldocs) {
-	// only set the keys that are gonna be used, not all
+	
+	defaultConfiguration();
+	
 	var displayObject = constructDisplayObject(alldocs[0]);
 	var alldisplayObjects = [displayObject];
 	/* {
@@ -110,21 +169,16 @@ var process = function(alldocs) {
 		for (ac in action) {
 			var a = action[ac];
 			console.log(a);
-			// only process this action if it was requested;
+			// only process this doc if it contains the requested action;
 			if(config.showAll || a === config.showAction) {
-				console.log('-----element-----');
-				console.log(singledoc);
+				//console.log('-----element-----');
+				//console.log(singledoc);
 				
-				console.log('StringToDateTest');
-				console.log(singledoc.doc.timestamp);
-				console.log(new Date(Date.parse(singledoc.doc.timestamp)));
-				singledoc.doc.timestamp = new Date(Date.parse(singledoc.doc.timestamp));
-				if (displayObject.newesttimestamp.getTime() < singledoc.doc.timestamp.getTime())
-					// x was generated later than s newest doc. Update
-					displayObject.newesttimestamp = singledoc.doc.timestamp;
-				if (displayObject.oldesttimestamp.getTime() > singledoc.doc.timestamp.getTime())
-					// x was generated before than s oldest doc. Update
-					displayObject.oldesttimestamp = singledoc.doc.timestamp;
+				//console.log('StringToDateTest')
+				//console.log(singledoc.doc.timestamp);
+				//console.log(new Date(Date.parse(singledoc.doc.timestamp)));
+				//console.log(new Date(singledoc.doc.timestamp));
+				singledoc.doc.timestamp = new Date(singledoc.doc.timestamp);
 				
 				if(singledoc.doc.timestamp.getTime() >= config.startTime.getTime() &&
 					singledoc.doc.timestamp.getTime() <= config.endTime.getTime()) {
@@ -133,21 +187,24 @@ var process = function(alldocs) {
 					} else {
 						//legacy code. makes sure the action is a summable number, not boolean
 						if (singledoc.doc[a] === true) singledoc.doc[a] = 1; 
-						
 
-
-						//core function. Apply
-						/*
-						var ret = applyMethod(displayObject,singledoc,a);
+						//core function. Apply the appropriate processing
+						var ret = applyMethod(displayObject, singledoc, a);
 						if (ret) {
 							displayObject = ret;
 							alldisplayObjects.push(ret);
-						}*/
-
-						displayObject[a] += parseInt(singledoc.doc[a],10);
+						}
+						if (displayObject.newesttimestamp.getTime() < singledoc.doc.timestamp.getTime())
+							// x was generated later than s newest doc. Update
+							displayObject.newesttimestamp = singledoc.doc.timestamp;
+						if (displayObject.oldesttimestamp.getTime() > singledoc.doc.timestamp.getTime())
+							// x was generated before than s oldest doc. Update
+							displayObject.oldesttimestamp = singledoc.doc.timestamp;
 						
-						console.log('---displayObject---');
-						console.log(displayObject);
+						//displayObject[a] += parseInt(singledoc.doc[a],10);
+						
+						//console.log('---displayObject---');
+						//console.log(displayObject);
 					}
 				}
 			}
@@ -164,9 +221,14 @@ exports.example = function(req, res, next) {
 	res.render('graphics/example');
 };
 
+var timeSort = function(a, b) {
+	return a.doc.time - b.doc.time;
+}
+
 exports.summary = function(req, res, next) {
 	var db = conn.database(req.params.patient);
-	db.all({ include_docs : true }, function(err, alldocs) {
+	db.all({ include_docs : true, sort: "time"}, function(err, alldocs) {
+		console.log(alldocs);
 		if (err) {
 			//msg = errorMessage(err);
 			res.render('graphics/example', {
@@ -174,27 +236,16 @@ exports.summary = function(req, res, next) {
 			});
 			msg = '';
 		} else {
+			var alldocsSorted = alldocs.sort(timeSort);
 			var s = process(alldocs);
 			console.log(s);
 
-			/*
-			var lineHeaderArray = [];
-			var lineArray = [];
-			if (config.showAll) {
-				lineHeaderArray = "['Period', 'ls', 'rs', 'ss', 'su', 'sd'],";
-				lineHeader = "['Sum'," + s.ls, s.rs, s.ss, s.su, s.sd ];
-			} else {
-				lineHeaderArray = ['Period', config.showAction];
-				lineHeader = ['Sum', s[config.showAction] ];
-			}
-			*/
-
 			res.render('graphics/display', {
 				msg: msg,
-				data: [s,s],
+				data: s,
 				config: config,
-				patient: req.params.patient
-			});
+			patient: req.params.patient
+});
 		}
 	});
 };

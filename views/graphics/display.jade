@@ -1,52 +1,48 @@
-html
-	head
-		title Bionik Labs
-		meta(http-equiv="Content-Type", content="text/html; charset=utf-8")
-		link(rel="stylesheet", href="/stylesheets/style.css")
-		script(type='text/javascript', src='https://www.google.com/jsapi')
-		| <script type='text/javascript'>
-		| google.load("visualization", "1", {packages:["corechart"]});
-		| google.setOnLoadCallback(drawChart);
-		| function drawChart() {
-		| 	var cloudantdata = [ 
-		if config.showAll
-			| ['Period', 'ls', 'rs', 'ss', 'su', 'sd'],
-			- each x in data
-				- each d in x
-					| 			['Sum', #{d.ls}, #{d.rs}, #{d.ss}, #{d.su}, #{d.sd}],	
-		else
-			|	['Period', '#{config.showAction}'],
-			- each x in data
-				- each d in x
-					- var value = d[config.showAction];
-					|	['Sum', #{value} ],	
-		| 	];  
-		| 	var data = google.visualization.arrayToDataTable(cloudantdata); 
+extends ../base
 
-		| 	var options = { 
-		| 		title: 'Steps Acummulated',
-		| 		hAxis: {title: 'Period', titleTextStyle: {color: 'black'}}
-		| 	};
+block append head
+	script(type='text/javascript', src='https://www.google.com/jsapi')
+	| <script type='text/javascript'>
+	| google.load("visualization", "1", {packages:["corechart"]});
+	| google.setOnLoadCallback(drawChart);
+	| function drawChart() {
+	| 	var cloudantdata = [ 
+	if config.showAll
+		| ['Period', 'ls', 'rs', 'ss', 'su', 'sd'],
+		- each d in data
+			| ['#{d.period}', #{d.ls}, #{d.rs}, #{d.ss}, #{d.su}, #{d.sd}],	
+	else
+		|	['Period', '#{config.showAction}'],
+		- each d in data
+			- var value = d[config.showAction];
+			|	['#{d.period}', #{value} ],	
+	| 	];  
+	| 	var data = google.visualization.arrayToDataTable(cloudantdata); 
 
-		| 	var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
-		| 	chart.draw(data, options);
-		| }   
-		| </script>
+	| 	var options = { 
+	| 		title: 'Steps Acummulated',
+	| 		hAxis: {title: 'Period', titleTextStyle: {color: 'black'}}
+	| 	};
 
-	body
-		span #{msg}
-		h1 #{patient} device information
-	- each d in data
-		- each x in d
-			ul
-				li rs : #{x.rs}
-				li ls : #{x.ls}
-				li ss : #{x.ss}
-				li su : #{x.su}
-				li sd : #{x.sd}
-				li docs processed : #{x.ndocs}
-				li timestamp : #{x.timestamp}
-				li newesttimestamp: #{x.newesttimestamp}
-				li oldesttimestamp: #{x.oldesttimestamp}
+	| 	var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+	| 	chart.draw(data, options);
+	| }   
+	| </script>
 
-		div#chart_div
+block append body
+	span #{msg}
+	h1 #{patient} device information
+
+	div#chart_div
+
+	- each x in data
+		ul
+			li ls : #{x.ls}
+			li rs : #{x.rs}
+			li ss : #{x.ss}
+			li su : #{x.su}
+			li sd : #{x.sd}
+			li docs processed : #{x.ndocs}
+			li timestamp : #{x.timestamp}
+			li newesttimestamp: #{x.newesttimestamp}
+			li oldesttimestamp: #{x.oldesttimestamp}

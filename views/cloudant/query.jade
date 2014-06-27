@@ -1,16 +1,15 @@
-html
-	include ../head
-	body
-		span #{msg}
-		h3 Query data from cloudant (with timestamps).
-		h3 NOT WORKING
-		div 
-			form(action='/cloudant/retrievepatient', method='post')
-				div#querypatientdiv(data-role='fieldcontain')
-					label(for='querypatient') Patient Name
-						input(id='querypatient', type='datetime', placeholder='Patient Name', name='querypatient')
-				div#doctimestampdiv(data-role='fieldcontain')
-					label(for='doctimestamp') doctimestamp
-						input(id='doctimestamp', type='text', placeholder='Doc timestamp', name='doctimestamp')
-				div(data-role='fieldcontain')   
-					input(type='submit',value='Query patient',data-transition='fade', data-theme='c')
+extends ../base
+block append body
+	span #{msg}
+	h3 Query data from cloudant (with timestamps).
+	h3 NOT WORKING
+	div 
+		form(action='/cloudant/retrievepatient', method='post')
+			div#querypatientdiv(data-role='fieldcontain')
+				label(for='querypatient') Patient Name
+					input(id='querypatient', type='datetime', placeholder='Patient Name', name='querypatient')
+			div#doctimestampdiv(data-role='fieldcontain')
+				label(for='doctimestamp') doctimestamp
+					input(id='doctimestamp', type='text', placeholder='Doc timestamp', name='doctimestamp')
+			div(data-role='fieldcontain')   
+				input(type='submit',value='Query patient',data-transition='fade', data-theme='c')

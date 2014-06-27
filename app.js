@@ -114,7 +114,9 @@ app.get('/cloudant/query', function(req, res){
 
 // post data to the cloudant db
 app.get('/cloudant/simulatedata', function(req, res) {
-	res.render('cloudant/simulatedata');
+	res.render('cloudant/simulatedata', {
+		now: new Date()
+	});
 });
 
 //retrieve data from form and redirect to appropriate page cloudant/:patient/:doc
@@ -130,8 +132,11 @@ app.post('/cloudant/postsimulateddata', function(req, postres) {
 
 	//id of doc will be timestamp. Problematic if the mcu produced two sets of data with the same
 	//timestamp. Is that a problem??
-	req.body.timestamp = new Date();
-	req.body.timespan = req.body.timestamp.getTime();
+	console.log('time from HTML form');
+	req.body.timestamp = new Date(req.body.time);
+	console.log(req.body.timestamp.toString());
+	req.body.time = new Date(req.body.time).getTime();
+	console.log(req.body.time);
 	req.body.ls = parseInt(req.body.ls,10);
 	req.body.rs = parseInt(req.body.rs,10);
 	req.body.ss = parseInt(req.body.ss,10);
@@ -146,7 +151,7 @@ app.post('/cloudant/postsimulateddata', function(req, postres) {
 	if(req.body.su > 0) action.push("su");
 	if(req.body.sd > 0) action.push("sd");
 
-	var docid = req.body.timestamp;
+	var docid = req.body.time;
 	
 	var db = conn.database(dbname);
 	var doc;
@@ -161,7 +166,7 @@ app.post('/cloudant/postsimulateddata', function(req, postres) {
 			console.log(err);
 			console.log(res);
 			//WARN: Existant document with same timestamp will be overwritten
-			db.save(docid, {// the id of the document on the pacient's database
+			db.save(docid.toString(), {// the id of the document on the pacient's database
 					action: action,
 					ls: req.body.ls,
 					rs: req.body.rs,
@@ -169,8 +174,8 @@ app.post('/cloudant/postsimulateddata', function(req, postres) {
 					su: req.body.su,
 					sd: req.body.sd,
 					tn: req.body.tn,
-					timespan: req.body.timespan,
-					timestamp: req.body.timestamp
+					time: req.body.time,
+					timestamp: req.body.timestamp.toString()
 				}, function (err, res) {
 					console.log("doc.save:");
 					console.log(err);
@@ -245,7 +250,7 @@ app.get('/cloudant/:patient/:docid', function(req, res) {
 						su : doc.su,
 						sd : doc.sd,
 						tn : doc.tn,
-						timespan : doc.timespan,
+						time : doc.time,
 						timestamp : doc.timestamp
 					}
 				]

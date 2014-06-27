@@ -1,7 +1,6 @@
-html
-	include ../head
-	body
-		span #{msg}
+extends ../base
+block append body
+	span #{msg}
 	h2 #{patient} information
 	- each x in data 
 		ul
