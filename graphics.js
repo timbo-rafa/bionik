@@ -7,7 +7,7 @@ var SPAN = {
 	WEEKLY :{ value: 2, name: "Weekly"},
 	MONTHLY:{ value: 3, name: "Monthly"},
 	YEARLY :{ value: 4, name: "Yearly"/*, func: isSameTimePeriodYearly */},
-	ONESPAN:{ value: 5, name: "Onespan"}
+	ALL:{ value: 5, name: "All"}
 };
 
 if (Object.freeze) Object.freeze(SPAN);
@@ -132,9 +132,9 @@ var applyMethod = function(displayObject, singledoc, a) {
 };
 
 var defaultConfiguration = function() {
-	config.getPeriod = getPeriodDaily;
+	config.getPeriod = getPeriodMonthly;
 	config.methodCall = sum;
-	config.isSameTimePeriod = isSameTimePeriodDaily;
+	config.isSameTimePeriod = isSameTimePeriodMonthly;
 };
 
 // Calculate the sum from all the step variables
@@ -230,13 +230,13 @@ exports.summary = function(req, res, next) {
 	db.all({ include_docs : true, sort: "time"}, function(err, alldocs) {
 		console.log(alldocs);
 		if (err) {
-			//msg = errorMessage(err);
+			console.log(err);
 			res.render('graphics/example', {
 				msg : msg
 			});
 			msg = '';
 		} else {
-			var alldocsSorted = alldocs.sort(timeSort);
+			//var alldocsSorted = alldocs.sort(timeSort);
 			var s = process(alldocs);
 			console.log(s);
 

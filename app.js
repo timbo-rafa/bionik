@@ -200,7 +200,7 @@ app.get('/cloudant/:patient', function(req, res) {
 	conn.database(patient).all( function(err, clouddata) {
 		if (err) {
 			msg = errorMessage(err);
-			res.render('/cloudantquery', {
+			res.render('/cloudant/query', {
 				msg : msg
 			});
 			msg = '';
