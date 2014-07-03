@@ -6,10 +6,10 @@
 // and jade as template engine (http://jade-lang.com/).
 
 var express = require('express');
-var cradle = require('cradle');
+    cloudant = require('./routes/database/cloudant');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var graphics = require('./graphics');
+var charts = require('./routes/chart/charts');
 
 // setup middleware
 var app = express();
@@ -44,34 +44,8 @@ var port = (process.env.VCAP_APP_PORT || 3000);
 
 // Start server
 app.listen(port, host);
+cloudant.connect();
 console.log('App started on port ' + port);
-
-// CLOUDANT CONNECTION
-
-// account
-var account = {
-	username: 'bionik',
-	password: 'bionik2014ibminternship'
-}
-
-// options
-var options = {
-	host: 'bionik.cloudant.com',
-	port: 443,
-	auth: account,
-	options: {
-		cache: true,
-		raw: false,
-		secure: true
-	}
-}
-
-// use cradle framework based on CouchDB to setup cloudant configuration
-cradle.setup(options);
-
-// connect
-conn = new(cradle.Connection)();
-// db = /* use local storage data to connect to patient's database */;
 
 // error/info messages
 msg = '';
@@ -105,8 +79,10 @@ app.get('/', function(req, res){
 	res.render('index');
 });
 
-app.get('/graphics', graphics.example);
-app.get('/graphics/:patient', graphics.summary);
+app.get('/graphics', charts.example);
+app.get('/graphics/:patient', charts.summary);
+app.get('/charts', charts.example);
+app.get('/charts/:patient', charts.summary);
 
 // query data from the cloud
 app.get('/cloudant/query', function(req, res){
@@ -124,33 +100,6 @@ app.get('/cloudant/simulatedata', function(req, res) {
 app.post('/cloudant/retrievepatient', function(req, res) {
 	res.redirect('/cloudant/' + req.body.querypatient + '/' + req.body.doctimestamp);
 });
-
-/*
-Date.prototype.getDateTwoDigits = function() {
-	var day = this.getDate();
-	if (day < 10) {
-		day = '0' + day;
-	}
-	return day;
-};
-
-Date.prototype.getDateTwoDigits = function() {
-	var day = this.getDate();
-	if (day < 10) {
-		day = '0' + day;
-	}
-	return day;
-};
-
-var universalTime = function(date) {
-	return new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-};
-
-var formatDate = function(date) {
-	return date.getFullYear() + DATE_SEPARATOR + date.getMonthTwoDigits() + DATE_SEPARATOR + date.getDateTwoDigits()
-	 + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
-};
-*/
 
 //post the data from simulatedata and then render the display page(
 app.post('/cloudant/postsimulateddata', function(req, postres) {
@@ -174,20 +123,20 @@ app.post('/cloudant/postsimulateddata', function(req, postres) {
 
 	var docid = req.body.timestamp;
 	
-	var db = conn.database(dbname);
+	cloudant.database(dbname);
 	var doc;
 	console.log('DEBUG');
 	console.log(req.body);
 
 	// check if patient database exists. If not, create it
-	db.exists(function (err, exists) {
+	cloudant.db.exists(function (err, exists) {
 		// XXX: Handle db already exists error
-		db.create(function(err, res) {
+		cloudant.db.create(function(err, res) {
 			console.log("db.create(): err and res:");
 			console.log(err);
 			console.log(res);
 			//WARN: Existant document with same timestamp will be overwritten
-			db.save(docid.toString(), {// the id of the document on the pacient's database
+			cloudant.db.save(docid.toString(), {// the id of the document on the pacient's database
 					ls: req.body.ls,
 					rs: req.body.rs,
 					ss: req.body.ss,
@@ -217,7 +166,8 @@ app.post('/cloudant/postsimulateddata', function(req, postres) {
 app.get('/cloudant/:patient', function(req, res) {
 	var patient = req.params.patient;
 	var data = [];
-	conn.database(patient).all( function(err, clouddata) {
+	cloudant.database(patient);
+	cloudant.db.all( function(err, clouddata) {
 		if (err) {
 			msg = errorMessage(err);
 			res.render('/cloudant/query', {
@@ -227,7 +177,8 @@ app.get('/cloudant/:patient', function(req, res) {
 		} else {
 			console.log('clouddata.length() = ' + clouddata.length);
 			clouddata.forEach(function(element, index, array) {
-				conn.database(patient).get(element, function(err, doc) {
+				cloudant.database(patient);
+				cloudant.db.get(element, function(err, doc) {
 					//data.push(Object.clone(doc, true));
 					data.push(doc);
 					console.log(data.length);
@@ -252,7 +203,8 @@ app.get('/cloudant/:patient', function(req, res) {
 app.get('/cloudant/:patient/:docid', function(req, res) {
 	var patient = req.params.patient;
 	var docid = req.params.docid;
-	conn.database(patient).get(docid, function(err, doc) {
+	cloudant.database(patient);
+	cloudant.db.get(docid, function(err, doc) {
 		if (err) {
 			msg = errorMessage(err);
 			res.render('cloudant/query', {

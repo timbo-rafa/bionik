@@ -24,3 +24,8 @@ var formatDate = function(date) {
 		   + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
 };
 */
+
+var timeSort = function(a, b) {
+	  return a["_id"] - b["_id"];
+}
+
