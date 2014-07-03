@@ -6,16 +6,16 @@ block append head
 	| google.load("visualization", "1", {packages:["corechart"]});
 	| google.setOnLoadCallback(drawChart);
 	| function drawChart() {
-	| 	var cloudantdata = [ 
-	if config.showAll
-		| ['Period', 'ls', 'rs', 'ss', 'su', 'sd'],
-		- each d in data
-			| ['#{d.period}', #{d.ls}, #{d.rs}, #{d.ss}, #{d.su}, #{d.sd}],	
-	else
-		|	['Period', '#{config.showAction}'],
-		- each d in data
-			- var value = d[config.showAction];
-			|	['#{d.period}', #{value} ],	
+	| 	var cloudantdata = [
+	|			[ 'Period'
+	- each action in config.showActions
+					,  '#{action}'
+	|			],
+	- each d in data
+		| ['#{d.period}'
+		- each action in config.showActions
+			|, #{d[action]}
+		| ],	
 	| 	];  
 	| 	var data = google.visualization.arrayToDataTable(cloudantdata); 
 

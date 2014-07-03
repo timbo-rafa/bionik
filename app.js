@@ -75,6 +75,7 @@ conn = new(cradle.Connection)();
 
 // error/info messages
 msg = '';
+DATE_SEPARATOR = '/';
 
 // function that generates error messages appropriately to be displayed on the browser.
 // related to the database.
@@ -115,7 +116,7 @@ app.get('/cloudant/query', function(req, res){
 // post data to the cloudant db
 app.get('/cloudant/simulatedata', function(req, res) {
 	res.render('cloudant/simulatedata', {
-		now: new Date()
+		now: new Date().toISOString()
 	});
 });
 
@@ -123,6 +124,33 @@ app.get('/cloudant/simulatedata', function(req, res) {
 app.post('/cloudant/retrievepatient', function(req, res) {
 	res.redirect('/cloudant/' + req.body.querypatient + '/' + req.body.doctimestamp);
 });
+
+/*
+Date.prototype.getDateTwoDigits = function() {
+	var day = this.getDate();
+	if (day < 10) {
+		day = '0' + day;
+	}
+	return day;
+};
+
+Date.prototype.getDateTwoDigits = function() {
+	var day = this.getDate();
+	if (day < 10) {
+		day = '0' + day;
+	}
+	return day;
+};
+
+var universalTime = function(date) {
+	return new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+};
+
+var formatDate = function(date) {
+	return date.getFullYear() + DATE_SEPARATOR + date.getMonthTwoDigits() + DATE_SEPARATOR + date.getDateTwoDigits()
+	 + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
+};
+*/
 
 //post the data from simulatedata and then render the display page(
 app.post('/cloudant/postsimulateddata', function(req, postres) {
@@ -133,9 +161,9 @@ app.post('/cloudant/postsimulateddata', function(req, postres) {
 	//id of doc will be timestamp. Problematic if the mcu produced two sets of data with the same
 	//timestamp. Is that a problem??
 	console.log('time from HTML form');
-	req.body.timestamp = new Date(req.body.time);
+	req.body.timestamp = new Date(req.body.time).toISOString();
 	console.log(req.body.timestamp.toString());
-	req.body.time = new Date(req.body.time).getTime();
+	req.body.time = new Date(req.body.timestamp).getTime();
 	console.log(req.body.time);
 	req.body.ls = parseInt(req.body.ls,10);
 	req.body.rs = parseInt(req.body.rs,10);
@@ -144,14 +172,7 @@ app.post('/cloudant/postsimulateddata', function(req, postres) {
 	req.body.sd = parseInt(req.body.sd,10);
 	req.body.tn = parseInt(req.body.tn,10);
 
-	var action = [];
-	if(req.body.ls > 0) action.push("ls");
-	if(req.body.rs > 0) action.push("rs");
-	if(req.body.ss > 0) action.push("ss");
-	if(req.body.su > 0) action.push("su");
-	if(req.body.sd > 0) action.push("sd");
-
-	var docid = req.body.time;
+	var docid = req.body.timestamp;
 	
 	var db = conn.database(dbname);
 	var doc;
@@ -167,7 +188,6 @@ app.post('/cloudant/postsimulateddata', function(req, postres) {
 			console.log(res);
 			//WARN: Existant document with same timestamp will be overwritten
 			db.save(docid.toString(), {// the id of the document on the pacient's database
-					action: action,
 					ls: req.body.ls,
 					rs: req.body.rs,
 					ss: req.body.ss,
