@@ -14,7 +14,9 @@ if (Object.freeze) Object.freeze(SPAN);
 
 var MONTHNAME = [];
 
-ACTIONS = [ "ls", "rs", "ss", "sd", "su" ];
+actions = [ "ls", "rs", "ss", "sd", "SU" ];
+ACTIONS = [ "LS", "RS", "SS", "SD", "SU" ];
+
 if (Object.freeze) Object.freeze(ACTIONS);
 
 MONTHNAME.push("January");
@@ -56,21 +58,21 @@ var getPeriodDaily = function(date) {
 //internal functions
 
 var constructDisplayObject = function(doc) {
-	var objectDate = new Date(doc.doc.timestamp);
+	var objectDate = new Date(doc.doc.TS);
 	displayObject = {
-		ls : 0,
-		rs : 0,
-		ss : 0,
-		su : 0,
-		sd : 0,	
-		tn: 0, // is tn conditional?
+		LS : 0,
+		RS : 0,
+		SS : 0,
+		SU : 0,
+		SD : 0,	
+		TN: 0, // is TN conditional?
 		ndocs: 0,
 		method: "sum",
 		period: config.getPeriod(objectDate),
-		timestamp: objectDate,
+		TS: objectDate,
 		time: objectDate.getTime(),
-		newesttimestamp: new Date(0),
-		oldesttimestamp: new Date()
+		newestTS: new Date(0),
+		oldestTS: new Date()
 	};
 	return displayObject;
 };
@@ -111,8 +113,8 @@ var isSameTimePeriodDaily = function(displayObject, singledoc) {
 var applyMethod = function(displayObject, singledoc, a) {
 
 	var ret = undefined;
-	displayObject.date = new Date(displayObject.timestamp);
-	singledoc.doc.date = new Date(singledoc.doc.timestamp);
+	displayObject.date = new Date(displayObject.TS);
+	singledoc.doc.date = new Date(singledoc.doc.TS);
 
 	//data must be returned sorted in order to make this conditional valid
 	if (config.isSameTimePeriod(displayObject, singledoc)) {
@@ -125,12 +127,12 @@ var applyMethod = function(displayObject, singledoc, a) {
 	}
 	
 	//timestamp management
-	if (displayObject.newesttimestamp.getTime() < singledoc.doc.timestamp.getTime())
+	if (displayObject.newestTS.getTime() < singledoc.doc.TS.getTime())
 		// singledoc was generated later than displayObject newest doc. Update
-		displayObject.newesttimestamp = singledoc.doc.timestamp;
-	if (displayObject.oldesttimestamp.getTime() > singledoc.doc.timestamp.getTime())
+		displayObject.newestTS = singledoc.doc.TS;
+	if (displayObject.oldestTS.getTime() > singledoc.doc.TS.getTime())
 		// singledoc was generated before than displayObject oldest doc. Update
-		displayObject.oldesttimestamp = singledoc.doc.timestamp;
+		displayObject.oldestTS = singledoc.doc.TS;
 	displayObject.ndocs += 1;
 	
 	//console.log('---displayObject---');
@@ -170,14 +172,14 @@ var process = function(alldocs) {
 				console.log(singledoc);
 				
 				//console.log('StringToDateTest')
-				//console.log(singledoc.doc.timestamp);
-				//console.log(new Date(Date.parse(singledoc.doc.timestamp)));
-				console.log(new Date(singledoc.doc.timestamp));
-				singledoc.doc.timestamp = new Date(singledoc.doc.timestamp);
+				//console.log(singledoc.doc.TS);
+				//console.log(new Date(Date.parse(singledoc.doc.TS)));
+				console.log(new Date(singledoc.doc.TS));
+				singledoc.doc.TS = new Date(singledoc.doc.TS);
 				
-				var isInPeriod = ( singledoc.doc.timestamp.getTime() >= config.startTime.getTime() &&
-					singledoc.doc.timestamp.getTime() <= config.endTime.getTime());
-				console.log('singledoc.doc.timestamp = ', singledoc.doc.timestamp,
+				var isInPeriod = ( singledoc.doc.TS.getTime() >= config.startTime.getTime() &&
+					singledoc.doc.TS.getTime() <= config.endTime.getTime());
+				console.log('singledoc.doc.TS = ', singledoc.doc.TS,
 					config.startTime, config.endTime);
 				console.log('inside requested time period = ', isInPeriod);
 

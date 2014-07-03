@@ -110,18 +110,18 @@ app.post('/cloudant/postsimulateddata', function(req, postres) {
 	//id of doc will be timestamp. Problematic if the mcu produced two sets of data with the same
 	//timestamp. Is that a problem??
 	console.log('time from HTML form');
-	req.body.timestamp = new Date(req.body.time).toISOString();
-	console.log(req.body.timestamp.toString());
-	req.body.time = new Date(req.body.timestamp).getTime();
+	req.body.TS = new Date(req.body.time).toISOString();
+	console.log(req.body.TS.toString());
+	req.body.time = new Date(req.body.TS).getTime();
 	console.log(req.body.time);
-	req.body.ls = parseInt(req.body.ls,10);
-	req.body.rs = parseInt(req.body.rs,10);
-	req.body.ss = parseInt(req.body.ss,10);
-	req.body.su = parseInt(req.body.su,10);
-	req.body.sd = parseInt(req.body.sd,10);
-	req.body.tn = parseInt(req.body.tn,10);
+	req.body.LS = parseInt(req.body.LS,10);
+	req.body.RS = parseInt(req.body.RS,10);
+	req.body.SS = parseInt(req.body.SS,10);
+	req.body.SU = parseInt(req.body.SU,10);
+	req.body.SD = parseInt(req.body.SD,10);
+	req.body.TN = parseInt(req.body.TN,10);
 
-	var docid = req.body.timestamp;
+	var docid = req.body.TS;
 	
 	cloudant.database(dbname);
 	var doc;
@@ -137,14 +137,14 @@ app.post('/cloudant/postsimulateddata', function(req, postres) {
 			console.log(res);
 			//WARN: Existant document with same timestamp will be overwritten
 			cloudant.db.save(docid.toString(), {// the id of the document on the pacient's database
-					ls: req.body.ls,
-					rs: req.body.rs,
-					ss: req.body.ss,
-					su: req.body.su,
-					sd: req.body.sd,
-					tn: req.body.tn,
+					LS: req.body.LS,
+					RS: req.body.RS,
+					SS: req.body.SS,
+					SU: req.body.SU,
+					SD: req.body.SD,
+					TN: req.body.TN,
 					time: req.body.time,
-					timestamp: req.body.timestamp.toString()
+					TS: req.body.TS.toString()
 				}, function (err, res) {
 					console.log("doc.save:");
 					console.log(err);
@@ -216,14 +216,14 @@ app.get('/cloudant/:patient/:docid', function(req, res) {
 				msg : msg,
 				data : [
 					{
-						rs : doc.rs,
-						ls : doc.ls,
-						ss : doc.ss,
-						su : doc.su,
-						sd : doc.sd,
-						tn : doc.tn,
+						RS : doc.RS,
+						LS : doc.LS,
+						SS : doc.SS,
+						SU : doc.SU,
+						SD : doc.SD,
+						TN : doc.TN,
 						time : doc.time,
-						timestamp : doc.timestamp
+						TS : doc.TS
 					}
 				]
 			});
