@@ -1,61 +1,6 @@
-//state variables
-
-// not used (yet?)
-var SPAN = {
-	HOURLY :{ value: 0, name: "Hourly"},
-	DAILY  :{ value: 1, name: "Daily" },
-	WEEKLY :{ value: 2, name: "Weekly"},
-	MONTHLY:{ value: 3, name: "Monthly"},
-	YEARLY :{ value: 4, name: "Yearly"/*, func: isSameTimePeriodYearly */},
-	ALL:{ value: 5, name: "All"}
-};
-
-if (Object.freeze) Object.freeze(SPAN);
-
-var MONTHNAME = [];
-
-actions = [ "ls", "rs", "ss", "sd", "SU" ];
-ACTIONS = [ "LS", "RS", "SS", "SD", "SU" ];
-
-if (Object.freeze) Object.freeze(ACTIONS);
-
-MONTHNAME.push("January");
-MONTHNAME.push("February");
-MONTHNAME.push("March");
-MONTHNAME.push("April");
-MONTHNAME.push("May");
-MONTHNAME.push("June");
-MONTHNAME.push("July");
-MONTHNAME.push("August");
-MONTHNAME.push("September");
-MONTHNAME.push("October");
-MONTHNAME.push("November");
-MONTHNAME.push("December");
-if (Object.freeze) Object.freeze(MONTHNAME);
-
-var config = {
-	showActions: ACTIONS,
-	timePeriod: SPAN.YEARLY, //not used up to now
-	method: "sum",
-	startTime: new Date(0),
-	endTime  : new Date(), //refresh this time each time the graphics is displayed again
-	//getPeriod;
-	//methodCall;
-	//isSameTimePeriod;
-};
-
-var getPeriodYearly = function(date) {
-	return date.getFullYear().toString();
-};
-
-var getPeriodMonthly = function(date) {
-	return MONTHNAME[date.getMonth()] + ', ' + getPeriodYearly(date);
-};
-
-var getPeriodDaily = function(date) {
-	return date.getDate() + ', ' + getPeriodMonthly(date);
-};
 //internal functions
+
+config = require('./config');
 
 var constructDisplayObject = function(doc) {
 	var objectDate = new Date(doc.doc.TS);
@@ -67,7 +12,7 @@ var constructDisplayObject = function(doc) {
 		SD : 0,	
 		TN: 0, // is TN conditional?
 		ndocs: 0,
-		method: "sum",
+		//method: config.method,
 		period: config.getPeriod(objectDate),
 		TS: objectDate,
 		time: objectDate.getTime(),
@@ -75,31 +20,6 @@ var constructDisplayObject = function(doc) {
 		oldestTS: new Date()
 	};
 	return displayObject;
-};
-
-var sum = function(displayObject, singledoc, action) {
-	console.log('Summing', displayObject[action], '+', singledoc.doc[action]);
-	displayObject[action] += parseInt(singledoc.doc[action],10);
-};
-
-var isSameTimePeriodYearly = function(displayObject, singledoc) {
-	return singledoc.doc.date.getFullYear() === displayObject.date.getFullYear();
-};
-
-var isSameTimePeriodMonthly = function(displayObject, singledoc) {
-	var isSamePeriodYearly = isSameTimePeriodYearly(displayObject, singledoc);
-
-	return ( isSamePeriodYearly &&
-		( singledoc.doc.date.getMonth() === displayObject.date.getMonth() )
-	);
-};
-
-var isSameTimePeriodDaily = function(displayObject, singledoc) {
-	var isSamePeriodMonthly = isSameTimePeriodMonthly(displayObject, singledoc);
-
-	return ( isSamePeriodMonthly &&
-		( singledoc.doc.date.getDate() === displayObject.date.getDate() )
-	);
 };
 
 /* variable that will dynamically hold the function to evaluate if the incoming doc is on the
@@ -140,22 +60,8 @@ var applyMethod = function(displayObject, singledoc, a) {
 	return ret;
 };
 
-var defaultConfiguration = function() {
-
-	config.showActions = ACTIONS; // display all actions by default
-	config.endTime = new Date(); //refresh end of time period delimiter
-
-	config.getPeriod = getPeriodMonthly;
-	config.methodCall = sum;
-	config.isSameTimePeriod = isSameTimePeriodMonthly;
-	//config.period = 
-	return config;
-};
-
 // Calculate the sum from all the step variables
 var process = function(alldocs) {
-	
-	defaultConfiguration();
 	
 	var displayObject = undefined;
 	var alldisplayObjects = [];
@@ -164,7 +70,7 @@ var process = function(alldocs) {
 
 		singledoc = alldocs[y];
 		for (actionindex in config.showActions) {
-			action = ACTIONS[actionindex];
+			action = config.ACTIONS[actionindex];
 			console.log(action);
 			// only process this doc if it contains the requested action;
 			if (singledoc.doc[action] && singledoc.doc[action] > 0) {
@@ -179,6 +85,7 @@ var process = function(alldocs) {
 				
 				var isInPeriod = ( singledoc.doc.TS.getTime() >= config.startTime.getTime() &&
 					singledoc.doc.TS.getTime() <= config.endTime.getTime());
+				
 				console.log('singledoc.doc.TS = ', singledoc.doc.TS,
 					config.startTime, config.endTime);
 				console.log('inside requested time period = ', isInPeriod);
@@ -210,7 +117,6 @@ var process = function(alldocs) {
 };
 
 exports.example = function(req, res, next) {
-	cloudant.database('chart');
 	res.render('graphics/example');
 };
 
@@ -225,6 +131,7 @@ exports.summary = function(req, res, next) {
 			});
 			msg = '';
 		} else {
+			config.defaultConfiguration();
 			//console.log(alldocs);
 			//var alldocsSorted = alldocs.sort(timeSort);
 			//console.log('----docs sorted----');
@@ -236,7 +143,7 @@ exports.summary = function(req, res, next) {
 			res.render('graphics/display', {
 				msg: msg,
 				data: s,
-				config: defaultConfiguration(),
+				config: config,
 				patient: req.params.patient
 			});
 		}

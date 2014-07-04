@@ -34,6 +34,9 @@ exports.connect = function() {
 };
 
 exports.database = function(dbname) {
+	
+	if (conn === undefined)
+		exports.connect();
 	db = conn.database(dbname);
 	exports.db = db;
 	console.log('db = ', db);
