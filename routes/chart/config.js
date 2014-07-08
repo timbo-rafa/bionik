@@ -2,22 +2,21 @@
 var methods = require('./methods.js');
 //state variables
 
-// not used (yet?)
-var SPAN = [
-  { name: "All"},
-  //HOURLY :{ value: 1, name: "Hourly"},
-  { name: "Day" },
-  //WEEKLY :{ value: 3, name: "Weekly"},
-  { name: "Month"},
-  { name: "Year"}
-];
+var uninitialized = true;
 
-exports.timePeriod = SPAN.MONTHLY; //not used yet
+var STRING = {
+	DAY : "Day",
+	MONTH : "Month",
+	YEAR : "Year",
+	ALL : "All"
+};
+
+exports.STRING = STRING;
 exports.startTime = new Date(0);
 exports.endTime = new Date(); //refresh this each time the charts will be generated
-exports.method; //not used yet
+exports.method;
 exports.getPeriod;
-exports.methodCall;
+exports.method;
 exports.isSameTimePeriod;
 exports.period;
 exports.actions = [ "ls", "rs", "ss", "sd", "su" ];
@@ -31,54 +30,56 @@ if (Object.freeze) {
 	Object.freeze(exports.actions);
 	Object.freeze(exports.ACTIONS);
 	Object.freeze(MONTHNAME);
-	Object.freeze(SPAN);
+	Object.freeze(STRING);
 }
 
+// turn these into just variables and not functions?
 var getPeriod = {};
 
-getPeriod["All"] = function(date) {
-	return "All data";
+getPeriod[STRING.ALL] = function(date) {
+	return STRING.ALL;
 };
 
-getPeriod["Year"] = function(date) {
+getPeriod[STRING.YEAR] = function(date) {
 	return date.getFullYear().toString();
 };
 
-getPeriod["Month"] = function(date) {
-	return MONTHNAME[date.getMonth()] + ', ' + getPeriod["Year"](date);
+getPeriod[STRING.MONTH] = function(date) {
+	return MONTHNAME[date.getMonth()] + ', ' + getPeriod[STRING.YEAR](date);
 };
 
-getPeriod["Day"] = function(date) {
-	return date.getDate() + ', ' + getPeriod["Month"](date);
+getPeriod[STRING.DAY] = function(date) {
+	return date.getDate() + ', ' + getPeriod[STRING.MONTH](date);
 };
 
 var isSameTimePeriod = {};
 
-isSameTimePeriod["All"] = function(displayObject, singledoc) {
+isSameTimePeriod[STRING.ALL] = function(displayObject, singledoc) {
 	return true;
 };
 
-isSameTimePeriod["Year"] = function(displayObject, singledoc) {
+isSameTimePeriod[STRING.YEAR] = function(displayObject, singledoc) {
   return singledoc.doc.date.getFullYear() === displayObject.date.getFullYear();
 };
 
-isSameTimePeriod["Month"] = function(displayObject, singledoc) {
-  var isSamePeriodYear = isSameTimePeriod["Year"](displayObject, singledoc);
+isSameTimePeriod[STRING.MONTH] = function(displayObject, singledoc) {
+  var isSamePeriodYear = isSameTimePeriod[STRING.YEAR](displayObject, singledoc);
 
   return ( isSamePeriodYear &&
     ( singledoc.doc.date.getMonth() === displayObject.date.getMonth() )
   );
 };
 
-isSameTimePeriod["Day"] = function(displayObject, singledoc) {
-  var isSamePeriodMonth = isSameTimePeriod["Month"](displayObject, singledoc);
+isSameTimePeriod[STRING.DAY] = function(displayObject, singledoc) {
+  var isSamePeriodMonth = isSameTimePeriod[STRING.MONTH](displayObject, singledoc);
 
   return ( isSamePeriodMonth &&
     ( singledoc.doc.date.getDate() === displayObject.date.getDate() )
   );
 };
 
-var periodUpdate = function(period) {
+
+exports.updatePeriod = function(period) {
 	exports.getPeriod = getPeriod[period];
 	exports.isSameTimePeriod = isSameTimePeriod[period];
 	exports.period = period;
@@ -86,9 +87,22 @@ var periodUpdate = function(period) {
 
 exports.defaultConfiguration = function() {
 
-  endTime = new Date(); //refresh end of time period delimiter
+	if(uninitialized) {
+		endTime = new Date(); //refresh end of time period delimiter
 
-	periodUpdate("Month");
-  exports.methodCall = methods.sum;
+		exports.updatePeriod(STRING.MONTH);
+		exports.method = methods.sum;
+
+		uninitialized = false;
+	}
   return exports;
+};
+
+exports.updateConfiguration = function(startTime, endTime, period, method) {
+	uninitialized = false;
+	exports.startTime = startTime;
+	exports.endTime = endTime;
+	exports.updatePeriod(period);
+	exports.method = methods[method];
+	console.log('---config exports---', exports);
 };

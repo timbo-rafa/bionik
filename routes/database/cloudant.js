@@ -39,7 +39,7 @@ exports.database = function(dbname) {
 		exports.connect();
 	db = conn.database(dbname);
 	exports.db = db;
-	console.log('db = ', db);
-	console.log('exports.db = ', exports.db);
+	//console.log('db = ', db);
+	//console.log('exports.db = ', exports.db);
 	return db;
 };
