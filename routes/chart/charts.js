@@ -121,7 +121,7 @@ exports.update = function(req, res, next) {
 };
 
 exports.example = function(req, res, next) {
-	res.render('graphics/example');
+	res.render('charts/example');
 };
 
 exports.summary = function(req, res, next) {
@@ -130,7 +130,7 @@ exports.summary = function(req, res, next) {
 		//console.log(alldocs);
 		if (err) {
 			console.log(err);
-			res.render('graphics/example', {
+			res.render('charts/example', {
 				msg : msg
 			});
 			msg = '';
@@ -144,7 +144,7 @@ exports.summary = function(req, res, next) {
 			console.log(s.length);
 			//console.log(s);
 
-			res.render('graphics/display', {
+			res.render('charts/display', {
 				msg: msg,
 				url: req.url,
 				data: s,

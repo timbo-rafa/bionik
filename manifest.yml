@@ -1,9 +1,7 @@
 applications:
-- services:
-  - Bionik's Cloudant Database
-  disk_quota: 1024M
-  host: bionik
-  name: bionik
+- disk_quota: 1024M
+  host: bioniklabs
+  name: bioniklabs
   command: node app.js
   path: .
   domain: ng.bluemix.net

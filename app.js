@@ -51,6 +51,16 @@ console.log('App started on port ' + port);
 msg = '';
 DATE_SEPARATOR = '/';
 
+Date.prototype.toLocalISOString = function(){
+	var d = new Date(this.getTime() - this.getTimezoneOffset() * 60 * 1000);
+	return d.toISOString();
+};
+
+Date.prototype.fromLocalISOString = function(){
+	var d = new Date(this.getTime() + this.getTimezoneOffset() * 60 * 1000);
+	return d;
+};
+
 // function that generates error messages appropriately to be displayed on the browser.
 // related to the database.
 function errorMessage(err) {
@@ -63,7 +73,7 @@ function errorMessage(err) {
 
 	// as a last resort, return the error itself.
 	return err;
-}
+};
 
 // Routing
 
@@ -76,13 +86,17 @@ app.get('*', function(req, res, next) {
 // first page
 
 app.get('/', function(req, res){
-	res.render('index');
+	res.render('index', {
+		reqbody: req.body
+	});
 });
 
 app.get('/graphics', charts.example);
 app.get('/graphics/:patient', charts.summary);
 app.get('/charts', charts.example);
 app.get('/charts/:patient', charts.summary);
+app.post('/config/charts/update', charts.update);
+
 
 // query data from the cloud
 app.get('/cloudant/query', function(req, res){
@@ -92,25 +106,26 @@ app.get('/cloudant/query', function(req, res){
 // post data to the cloudant db
 app.get('/cloudant/simulatedata', function(req, res) {
 	res.render('cloudant/simulatedata', {
-		now: new Date().toISOString()
+		now: new Date().toLocalISOString()
 	});
 });
 
 //retrieve data from form and redirect to appropriate page cloudant/:patient/:doc
 app.post('/cloudant/retrievepatient', function(req, res) {
-	res.redirect('/cloudant/' + req.body.querypatient + '/' + req.body.doctimestamp);
+	res.redirect('/cloudant/' + req.body.querypatient + '/' + req.body.docTS);
 });
 
 //post the data from simulatedata and then render the display page(
 app.post('/cloudant/postsimulateddata', function(req, postres) {
 	console.log(req.body);
-	var patientname = req.body.patientname;
+	var patientname = req.body.PN;
 	var dbname = patientname;
 
 	//id of doc will be timestamp. Problematic if the mcu produced two sets of data with the same
 	//timestamp. Is that a problem??
 	console.log('time from HTML form');
-	req.body.TS = new Date(req.body.time).toISOString();
+	req.body.TS = new Date(req.body.TS).fromLocalISOString();
+	req.body.TS = req.body.TS.toISOString();
 	console.log(req.body.TS.toString());
 	req.body.time = new Date(req.body.TS).getTime();
 	console.log(req.body.time);
@@ -129,42 +144,37 @@ app.post('/cloudant/postsimulateddata', function(req, postres) {
 	console.log(req.body);
 
 	// check if patient database exists. If not, create it
-	cloudant.db.exists(function (err, exists) {
-		// XXX: Handle db already exists error
-		cloudant.db.create(function(err, res) {
-			console.log("db.create(): err and res:");
-			console.log(err);
-			console.log(res);
-			//WARN: Existant document with same timestamp will be overwritten
-			cloudant.db.save(docid.toString(), {// the id of the document on the pacient's database
-					LS: req.body.LS,
-					RS: req.body.RS,
-					SS: req.body.SS,
-					SU: req.body.SU,
-					SD: req.body.SD,
-					TN: req.body.TN,
-					time: req.body.time,
-					TS: req.body.TS.toString()
-				}, function (err, res) {
-					console.log("doc.save:");
-					console.log(err);
-					console.log(res);
-					if (err) {
-						msg = errorMessage(err);
-					} else {
-						msg = 'Document "' + docid +'" saved successfully.';
-						doc = res;
-					}
-					console.log(msg);
-					postres.redirect('/cloudant/' + dbname + '/' + docid);
-				});
-		});
+	// XXX: Handle db already exists error
+	cloudant.db.create(function(err, res) {
+		console.log("db.create(): err and res:", err, res);
+		//WARN: Existant document with same timestamp will be overwritten
+		cloudant.db.save(docid.toString(), {// the id of the document on the pacient's database
+				LS: req.body.LS,
+				RS: req.body.RS,
+				SS: req.body.SS,
+				SU: req.body.SU,
+				SD: req.body.SD,
+				TN: req.body.TN,
+				TS: req.body.TS.toString()
+			}, function (err, res) {
+				console.log("doc.save:");
+				console.log(err);
+				console.log(res);
+				if (err) {
+					msg = errorMessage(err);
+				} else {
+					msg = 'Document "' + docid +'" saved successfully.';
+					doc = res;
+				}
+				console.log(msg);
+				postres.redirect('/cloudant/' + dbname + '/' + docid);
+			});
 	});
 });
 
 //display all data from a patient
 app.get('/cloudant/:patient', function(req, res) {
-	var patient = req.params.patient;
+	var patient = req.params.PN;
 	var data = [];
 	cloudant.database(patient);
 	cloudant.db.all( function(err, clouddata) {
@@ -230,4 +240,42 @@ app.get('/cloudant/:patient/:docid', function(req, res) {
 		}
 		msg = '';
 	});
+});
+
+app.get('/_all_dbs', function(req, res) {
+	res.send({
+		"ok": true, 
+		"fake": true
+	});
+	res.render('index');
+});
+
+app.post('/:patient', function(req, apires) {
+	console.log('api saving data');
+	console.log(req.body, req.params);
+
+	req.body.TS = new Date(req.body.TS).toISOString();
+
+	cloudant.database(req.params.patient);
+	cloudant.db.create(function(err, res) {
+		//WARN: Existant document with same timestamp will be overwritten
+		cloudant.db.save(req.body.TS, req.body, function (err, res) {
+				console.log("api save:", req.body.TS);
+				console.log(err);
+				console.log(res);
+				if (err) {
+					msg = errorMessage(err);
+				} else {
+					msg = 'Document "' + req.body.TS +'" saved successfully.';
+					doc = res;
+				}
+				console.log(msg);
+				apires.send(res);
+			});
+	});
+});
+
+app.put('/:patient', function(req, res) {
+	res.send({"ok": true});
+	res.render('index');
 });

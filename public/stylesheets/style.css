@@ -2,10 +2,6 @@
  * This file provides css styles.
  */
 
-body, head {
-	font: inherit;
-}
-
 h1, h2, h3 {
 	text-align: center;
 }
@@ -15,7 +11,6 @@ table {
 	width: 800px;
 	margin: 0 auto;
 	word-wrap: break-word;
-	font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
 }
 
 th {
@@ -42,3 +37,12 @@ tr:hover td {
 	background-color: #DDF2F9;
 }
 
+div#chart_div {
+}
+
+form.configform {
+}
+
+div.floating-menu a, div.floating-menu h3 {
+	margin:0 0.5em;
+}

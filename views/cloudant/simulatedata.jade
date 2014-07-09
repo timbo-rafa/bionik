@@ -7,7 +7,7 @@ block append body
 		form(action='/cloudant/postsimulateddata', method='post')
 			div#patientnamediv(data-role='fieldcontain')
 				label(for='patientname') Patient Name
-					input(id='patientname', type='text', value='test', placeholder='Patient Name', name='PN')
+					input(id='patientname', type='text', value='test', placeholder='Patient Name', name='PN', autofocus)
 			div#LSdiv(data-role='fieldcontain')
 				label(for='LS') LS
 					input(id='LS', type='number',value='0', placeholder='Number of left steps', name='LS')
@@ -25,7 +25,7 @@ block append body
 					input(id='SD', type='number', value='0', placeholder='Number of SD', name='SD')
 			div#timediv(data-role='fieldcontain')
 				label(for='time') time
-					input(id='time', type='text', value='#{now}', placeholder='#{now}', name='time')
+					input(id='time', type='text', value='#{now}', placeholder='Timestamp', name='TS')
 			div#TNdiv(data-role='fieldcontain')
 				label(for='TN') TN
 					input(id='TN', type='datetime', value='0', placeholder='TN', name='TN')

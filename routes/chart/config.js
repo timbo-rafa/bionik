@@ -33,7 +33,6 @@ if (Object.freeze) {
 	Object.freeze(STRING);
 }
 
-// turn these into just variables and not functions?
 var getPeriod = {};
 
 getPeriod[STRING.ALL] = function(date) {
