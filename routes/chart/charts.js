@@ -1,8 +1,9 @@
 //internal functions
 
-config = require('./config');
+configMaster = require('./config');
+methods = require('./methods');
 
-var constructDisplayObject = function(doc) {
+var constructDisplayObject = function(doc, userConfig) {
 	var objectDate = new Date(doc.doc.TS);
 	displayObject = {
 		LS : 0,
@@ -12,7 +13,8 @@ var constructDisplayObject = function(doc) {
 		SD : 0,	
 		TN: 0, // is TN conditional?
 		ndocs: 0,
-		//method: config.method,
+		period: configMaster.getPeriod[userConfig.period](objectDate),
+		method: userConfig.method,
 		TS: objectDate,
 		time: objectDate.getTime(),
 		newestTS: new Date(0),
@@ -24,20 +26,20 @@ var constructDisplayObject = function(doc) {
 /* function that decides what calculation will be made (with the step variables)
  * and calls the appropriate function using the appropriate configs
  */
-var applyMethod = function(displayObject, singledoc, a) {
+var applyMethod = function(displayObject, singledoc, a, userConfig) {
 
 	var ret = undefined;
 	displayObject.date = new Date(displayObject.TS);
 	singledoc.doc.date = new Date(singledoc.doc.TS);
 
 	//data must be returned sorted in order to make this conditional valid
-	if (config.isSameTimePeriod(displayObject, singledoc)) {
-		config.method(displayObject, singledoc, a);
+	if (configMaster.isSameTimePeriod[userConfig.period](displayObject, singledoc)) {
+		methods[userConfig.method](displayObject, singledoc, a);
 	} else {
 		//begin another set of bars on the graphic
-		ret = constructDisplayObject(singledoc);
+		ret = constructDisplayObject(singledoc, userConfig);
 		displayObject = ret;
-		config.method(ret, singledoc, a);
+		methods[userConfig.method](ret, singledoc, a);
 	}
 	
 	//timestamp management
@@ -54,21 +56,21 @@ var applyMethod = function(displayObject, singledoc, a) {
 };
 
 // Calculate the sum from all the step variables
-var process = function(alldocs) {
+var process = function(alldocs, userConfig) {
 	
 	var displayObject = undefined;
 	var alldisplayObjects = [];
 
-	for (y in alldocs) {
+	console.log('process: ', alldocs.length, userConfig);
+	for (var y in alldocs) {
 
-		singledoc = alldocs[y];
-		for (actionindex in config.showActions) {
-			action = config.ACTIONS[actionindex];
-			//console.log(action);
+		var singledoc = alldocs[y];
+		for (var actionindex in userConfig.showActions) {
+			var action = userConfig.showActions[actionindex];
+			//console.log('  ',action);
 			// only process this doc if it contains the requested action;
 			if (singledoc.doc[action] && singledoc.doc[action] > 0) {
-				//console.log('-----element-----');
-				//console.log(singledoc);
+				//console.log('    ',singledoc);
 				
 				//console.log('StringToDateTest')
 				//console.log(singledoc.doc.TS);
@@ -76,8 +78,10 @@ var process = function(alldocs) {
 				//console.log(new Date(singledoc.doc.TS));
 				singledoc.doc.TS = new Date(singledoc.doc.TS);
 				
-				var isInPeriod = ( singledoc.doc.TS.getTime() >= config.startTime.getTime() &&
-					singledoc.doc.TS.getTime() <= config.endTime.getTime());
+				var isInPeriod = ( singledoc.doc.TS.getTime() >=
+					userConfig.startTime.getTime() &&
+					singledoc.doc.TS.getTime() <=
+					userConfig.endTime.getTime());
 				
 				//console.log('singledoc.doc.TS = ', singledoc.doc.TS,
 				//	config.startTime, config.endTime);
@@ -87,8 +91,8 @@ var process = function(alldocs) {
 
 					//core function. Apply the appropriate processing
 					if (displayObject === undefined)
-						displayObject = constructDisplayObject(singledoc);
-					var ret = applyMethod(displayObject, singledoc, action);
+						displayObject = constructDisplayObject(singledoc, userConfig);
+					var ret = applyMethod(displayObject, singledoc, action, userConfig);
 					if (ret) {
 						//console.log('----pushing this----');
 						//console.log(displayObject);
@@ -110,57 +114,113 @@ var process = function(alldocs) {
 	return alldisplayObjects;
 };
 
-exports.update = function(req, res, next) {
-	console.log('chart update request from', req.body.requrl);
-	req.body.startTime = new Date(req.body.startTime).fromLocalISOString();
-	req.body.endTime = new Date(req.body.endTime).fromLocalISOString();
-	console.log(req.body);
-	config.updateConfiguration(
-		req.body.startTime, req.body.endTime, req.body.period, req.body.method);
-	res.redirect(req.body.requrl);
+exports.queryDataUpdate = function(config, query) {
+	console.log(query);
+	configMaster.updateConfigurationQuery(config, query);
+	//configMaster.updateConfiguration(config, req.body.startTime, req.body.endTime,
+	//	req.body.period, req.body.method, req.session.userConfig.showActions);
 };
 
 exports.example = function(req, res, next) {
 	res.render('charts/example');
 };
 
-exports.summary = function(req, res, next) {
-	cloudant.database(req.params.patient);
+exports.formatForGoogleCharts = function(allDisplayObjects, config) {
+	console.log('formatForGoogleCharts');
+	var googleChartsFormattedData = [];
+	var header = ["Period"];
+	// Header
+
+//  |     [ 'Period'
+//  - each action in config.showActions
+//          ,  '#{action}'
+//  |     ],  
+	for (actionidx in config.showActions) {
+		header.push(config.showActions[actionidx]);	
+	}
+	googleChartsFormattedData.push(header);
+
+//  - each d in data
+//    | ['#{d.period}'
+//    - each action in config.showActions
+//      |, #{d[action]}
+//    | ],  
+	for (idx in allDisplayObjects) {
+		var displayObject = allDisplayObjects[idx];
+		var data = [displayObject.period];
+		//console.log('displayObject: ', displayObject);
+		for (actionidx in config.showActions) {
+			action = config.showActions[actionidx];
+			data.push(displayObject[action]);
+		}
+		googleChartsFormattedData.push(data);
+	}
+	console.log('googleData: ', googleChartsFormattedData);
+	
+	return googleChartsFormattedData;
+};
+
+// Functions that receives the data from cloudant and
+// generates objects suitable for plotting the charts
+exports.processData = function(session, callback) {
+
+//	console.log('processData userConfig before everything:',session.userConfig);
+	cloudant.database(session.patient);
 	cloudant.db.all({ include_docs : true, ascending: true}, function(err, alldocs) {
 		//console.log(alldocs);
 		if (err) {
+			console.log('Error retrieving Cloudant data:');
 			console.log(err);
-			res.render('charts/example', {
-				msg : msg
-			});
-			msg = '';
 		} else {
-			config.defaultConfiguration();
+			//console.log('req.session after:',req.session);
 			//console.log(alldocs);
 			//var alldocsSorted = alldocs.sort(timeSort);
 			//console.log('----docs sorted----');
 			//console.log(alldocsSorted);
-			var s = process(alldocs);
-			console.log(s.length);
-			//console.log(s);
+			session.userConfig = sessionConfig(session);	
+			var chartData = process(alldocs, session.userConfig);
+			console.log(chartData.length);
+			//console.log(chartData);
+		}
+		callback(err, chartData);
+	});
+};
 
-			res.render('charts/display', {
-				msg: msg,
-				url: req.url,
-				data: s,
-				config: config,
-				patient: req.params.patient,
-				autofill : {
-					url                : req.url,
-					startTime          : config.startTime.toLocalISOString().slice(0, -1),
-					endTime            : config.endTime.toLocalISOString().slice(0, -1),
-					isDayRadioChecked  : config.period === config.STRING.DAY   ? "checked":"",
-					isMonthRadioChecked: config.period === config.STRING.MONTH ? "checked":"",
-					isYearRadioChecked : config.period === config.STRING.YEAR  ? "checked":"",
-					isAllRadioChecked  : config.period === config.STRING.ALL   ? "checked":"",
-					isSumRadioChecked  : "checked"
-				}
-			});
+sessionConfig = function(session) {
+	var userConfig = session.userConfig;
+	if (userConfig === undefined) {
+		userConfig = configMaster.newConfiguration();
+		//req.session.userConfig.defaultConfiguration();
+	}
+	if (typeof userConfig.startTime == 'string' || userConfig.startTime instanceof String)
+		userConfig.startTime = new Date(userConfig.startTime);
+	if (typeof userConfig.endTime == 'string' || userConfig.endTime instanceof String)
+		userConfig.endTime = new Date(userConfig.endTime);
+	//console.log('userConfig:', userConfig);
+	session.userConfig = userConfig;
+	return userConfig;
+}
+
+exports.summary = function(req, res, next) {
+	console.log('exports.summary. patient:', req.params.patient);
+	req.session.patient = req.params.patient;
+	req.session.userConfig = sessionConfig(req.session);
+	var userConfig = req.session.userConfig;
+	res.render('charts/display', {
+		msg: msg,
+		url: req.url,
+		config: userConfig,
+		STRING : configMaster.STRING,
+		patient: req.params.patient,
+		autofill : {
+			url                : req.url,
+			startTime          : userConfig.startTime.toISOString(),
+			endTime            : userConfig.endTime.toISOString(),
+			isDayRadioChecked  : userConfig.period === configMaster.STRING.DAY   ? "checked":"",
+			isMonthRadioChecked: userConfig.period === configMaster.STRING.MONTH ? "checked":"",
+			isYearRadioChecked : userConfig.period === configMaster.STRING.YEAR  ? "checked":"",
+			isAllRadioChecked  : userConfig.period === configMaster.STRING.ALL   ? "checked":"",
+			isSumRadioChecked  : "checked"
 		}
 	});
 };

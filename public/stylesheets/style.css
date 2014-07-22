@@ -38,9 +38,10 @@ tr:hover td {
 }
 
 div#chart_div {
+	height: 1000px;
 }
 
-form.configform {
+form#configform {
 }
 
 div.floating-menu a, div.floating-menu h3 {

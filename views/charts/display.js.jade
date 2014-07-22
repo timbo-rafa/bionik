@@ -1,0 +1,133 @@
+block script
+	script(src='https://www.google.com/jsapi')
+	script.
+		var ENTER_KEY = 13;
+		function dateFormat(date) {
+			DATESEPARATOR = '-';
+			return date.getFullYear() + DATESEPARATOR +
+				(date.getMonth()+1) + DATESEPARATOR + date.getDate();
+		}
+
+		function timeFormat(date) {
+			return date.getHours() + ':' + date.getMinutes();
+		}
+
+		$().ready(function() {
+			now = new Date();
+			$('#endTimeDate').val(dateFormat(now));
+			$('#endTimeHour').val(timeFormat(now));
+			now.setFullYear(now.getFullYear(), now.getMonth() - 1);
+			$('#startTimeDate').val(dateFormat(now));
+			$('#startTimeHour').val(timeFormat(now));
+		});
+
+		function newAjaxRequest() {
+			var xmlhttp;
+			try{
+				// Opera 8.0+, Firefox, Safari
+				xmlhttp = new XMLHttpRequest();
+			} catch (e){
+				// Internet Explorer Browsers
+				try{
+					xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+				} catch (e) {
+					try{
+						xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+					} catch (e){
+						// Something went wrong
+						alert("Your browser broke!");
+						return false;
+					}	 
+				}	 
+			}
+			
+			return xmlhttp; 
+		}
+
+		function updateCharts(key, value) {
+			var xmlhttp = newAjaxRequest();
+
+			if (!xmlhttp) return false;
+
+			xmlhttp.onreadystatechange = function() {
+				if (xmlhttp.readyState == 4) {
+					response = JSON.parse(xmlhttp.response);
+					console.log('updateConfig onreadystatechange response: ', response);
+					updateChartData(response.chartData, response.chartOptions);
+					document.ajaxForm.testajax.value = xmlhttp.response;
+				}
+			}
+
+			xmlhttp.open("POST", "/api/ajax/updateCharts?" + key + "=" + value, true);
+			xmlhttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+			xmlhttp.send();
+		}
+
+		google.load("visualization", "1", {packages:["corechart"]});
+		google.setOnLoadCallback(init);
+
+		cloudantdata = [];
+		var options = { 
+			title: 'Steps Acummulated',
+			hAxis: {title: '#{config.period}', titleTextStyle: {color: 'black'}}
+		};	
+		
+		function updateChartData(newData, opt) {
+			cloudantdata = newData;
+			options = opt;
+			drawChart();
+		}
+		
+		function init() {
+			console.log('init function called');
+			updateCharts("period", "default");
+		}
+
+		function drawChart() {
+			console.log('typeof ', typeof cloudantdata);
+			console.log(cloudantdata);
+			var data = google.visualization.arrayToDataTable(cloudantdata); 
+			var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+			chart.draw(data, options);
+		}
+
+		function submitConfiguration(form) {
+			console.log('submitConfiguration ', this);
+			for (idx in form.elements) {
+				console.log(idx, '=', form.elements[idx].value);
+			}
+			return false;
+		}
+
+		function updateTime(key, date, hour) {
+			if (date.length > 0 && hour.length > 0) {
+				console.log(date, hour);
+				dateString = date + ' ' + hour;
+				dateObject = new Date(dateString);
+				console.log(dateObject);
+				updateCharts(key,dateObject.toISOString());
+			}
+		}
+
+		$('#startTimeDate, #startTimeHour').keyup(function(e) {
+			if (e.which === ENTER_KEY) {
+				updateTime("startTime", $('#startTimeDate').val(), $('#startTimeHour').val());
+			}
+		});
+
+		$('#endTimeDate, #endTimeHour').keyup(function(e) {
+			if (e.which === ENTER_KEY) {
+				updateTime("endTime", $('#endTimeDate').val(), $('#endTimeHour').val());
+			}
+		});
+
+		$('#startTimeDate, #startTimeHour, #endTimeDate, #endTimeHour').blur(function(e) {
+			var e = jQuery.Event("keyup");
+			e.which = ENTER_KEY;
+			$(this).trigger(e);
+		});
+
+		$('.periodradiobuttons').click(function(e) {
+			//console.log('period=', e.target.value);
+			updateCharts("period", e.target.value);
+		});

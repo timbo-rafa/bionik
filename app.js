@@ -6,15 +6,16 @@
 // and jade as template engine (http://jade-lang.com/).
 
 var express = require('express');
-    cloudant = require('./routes/database/cloudant');
-var cookieParser = require('cookie-parser');
+//var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var charts = require('./routes/chart/charts');
+		cloudant = require('./routes/database/cloudant');
 
 // setup middleware
 var app = express();
 
-app.use(cookieParser());
+app.use(express.cookieParser());
+app.use(express.session({secret: 'Figureoutabettersecretlater'}));
 app.use(bodyParser());
 app.use(app.router);
 app.use(express.favicon());
@@ -51,15 +52,15 @@ console.log('App started on port ' + port);
 msg = '';
 DATE_SEPARATOR = '/';
 
-Date.prototype.toLocalISOString = function(){
-	var d = new Date(this.getTime() - this.getTimezoneOffset() * 60 * 1000);
-	return d.toISOString();
-};
-
-Date.prototype.fromLocalISOString = function(){
-	var d = new Date(this.getTime() + this.getTimezoneOffset() * 60 * 1000);
-	return d;
-};
+//Date.prototype.toLocalISOString = function(){
+//	var d = new Date(this.getTime() - this.getTimezoneOffset() * 60 * 1000);
+//	return d.toISOString();
+//};
+//
+//Date.prototype.fromLocalISOString = function(){
+//	var d = new Date(this.getTime() + this.getTimezoneOffset() * 60 * 1000);
+//	return d;
+//};
 
 // function that generates error messages appropriately to be displayed on the browser.
 // related to the database.
@@ -80,22 +81,21 @@ function errorMessage(err) {
 //debug
 app.get('*', function(req, res, next) {
 	//console.log(req.method, req.url, req.statusCode, req.httpVersion);
+	//console.log('req.body:',req.body, 'req.query:', req.query, 'req.params', req.params);
 	next();
 });
 
 // first page
 
 app.get('/', function(req, res){
-	res.render('index', {
-		reqbody: req.body
-	});
+	res.render('index'); 
 });
 
 app.get('/graphics', charts.example);
 app.get('/graphics/:patient', charts.summary);
 app.get('/charts', charts.example);
 app.get('/charts/:patient', charts.summary);
-app.post('/config/charts/update', charts.update);
+//app.post('/config/charts/update', charts.update);
 
 
 // query data from the cloud
@@ -124,7 +124,7 @@ app.post('/cloudant/postsimulateddata', function(req, postres) {
 	//id of doc will be timestamp. Problematic if the mcu produced two sets of data with the same
 	//timestamp. Is that a problem??
 	console.log('time from HTML form');
-	req.body.TS = new Date(req.body.TS).fromLocalISOString();
+	req.body.TS = new Date(req.body.TS);
 	req.body.TS = req.body.TS.toISOString();
 	console.log(req.body.TS.toString());
 	req.body.time = new Date(req.body.TS).getTime();
@@ -278,4 +278,61 @@ app.post('/:patient', function(req, apires) {
 app.put('/:patient', function(req, res) {
 	res.send({"ok": true});
 	res.render('index');
+});
+
+// AJAX
+
+app.post('/api/ajax/updateCharts', function(req, res, next) {
+	console.log('updateCharts: ', req.method, req.url);
+	console.log(req.method, req.url);
+	charts.queryDataUpdate(req.session.userConfig, req.query);
+	charts.processData(req.session, function(err, chartData) {
+		if (err) {
+			res.send(err);
+		} else {
+			var formattedData = charts.formatForGoogleCharts(chartData, req.session.userConfig);
+			var options = {
+				title: req.session.patient,
+				vAxis: {
+					title: req.session.userConfig.period,
+					titleTextStyle: {color: "black"}
+				},
+				hAxis: {
+					title: "Steps Accumulated",
+					titleTextStyle: {color: "black"}
+				}
+			};
+			res.send({chartData: formattedData, chartOptions: options});
+		}
+	});
+});
+
+//app.post('/api/ajax/updatePeriod', function(req, res, next) {
+//	console.log(req.method, req.url);
+//	charts.queryDataUpdate(req.session.userConfig, req.query);
+//	charts.processData(req.session, function(err, chartData) {
+//		if (err) {
+//			res.send(err);
+//		} else {
+//			var formattedData = charts.formatForGoogleCharts(chartData, req.session.userConfig);
+//			var options = {
+//				title: req.session.patient,
+//				vAxis: {
+//					title: req.session.userConfig.period,
+//					titleTextStyle: {color: "black"}
+//				},
+//				hAxis: {
+//					title: "Steps Accumulated",
+//					titleTextStyle: {color: "black"}
+//				}
+//			};
+//			res.send({chartData: formattedData, chartOptions: options});
+//		}
+//	});
+//});
+
+var n = 0;
+app.get('/api/ajax/configupdate', function(req, res) {
+	n = n + 1;
+	res.send(n.toString() + " clicks");
 });

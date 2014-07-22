@@ -1,69 +1,54 @@
 extends ../base
 
-block append head
-	script(type='text/javascript', src='https://www.google.com/jsapi')
-	| <script type='text/javascript'>
-	| google.load("visualization", "1", {packages:["corechart"]});
-	| google.setOnLoadCallback(drawChart);
-	| function drawChart() {
-	| 	var cloudantdata = [
-	|			[ 'Period'
-	- each action in config.showActions
-					,  '#{action}'
-	|			],
-	- each d in data
-		| ['#{d.period}'
-		- each action in config.showActions
-			|, #{d[action]}
-		| ],	
-	| 	];  
-	| 	var data = google.visualization.arrayToDataTable(cloudantdata); 
-
-	| 	var options = { 
-	| 		title: 'Steps Acummulated',
-	| 		hAxis: {title: '#{config.period}', titleTextStyle: {color: 'black'}}
-	| 	};
-
-	| 	var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
-	| 	chart.draw(data, options);
-	| }   
-	| </script>
-
 block append body
-	span #{msg}
-	h1 #{patient} device information
+	if msg
+		span #{msg}
 	
 	div#configmenudiv
 		block menu
-			form(class="configform", action="/config/charts/update", method="post")
+			form#configform(name="configform", onsubmit='return false;')
 					div#periodradiodiv(data-role='fieldcontain')
 						span Each chart will represent the data of
 						br
-						| <input id='dayradiobutton' type='radio' value='#{config.STRING.DAY}'
-						| name='period' #{autofill.isDayRadioChecked} >
+						|<input id='dayradiobutton' class='periodradiobuttons'
+						| type='radio' value='#{STRING.DAY}' name='period' 
+						| #{autofill.isDayRadioChecked}
+						| >
 						label(for='dayradiobutton') Day
 						br
-						| <input id='monthradiobutton' type='radio' value='#{config.STRING.MONTH}'
-						| name='period' #{autofill.isMonthRadioChecked} >
+						| <input id='monthradiobutton' class='periodradiobuttons'
+						| type='radio' value='#{STRING.MONTH}' name='period' 
+						| #{autofill.isMonthRadioChecked}
+						| >
 						label(for='monthradiobutton') Month
 						br
-						|<input id='yearradiobutton' type='radio' value='#{config.STRING.YEAR}'
-						| name='period' #{autofill.isYearRadioChecked} >
+						|<input id='yearradiobutton' class='periodradiobuttons'
+						| type='radio' value='#{STRING.YEAR}' name='period' 
+						| #{autofill.isYearRadioChecked}
+						| >
 						label(for='yearradiobutton') Year
 						br
-						| <input id='allradiobutton'  type='radio' value='#{config.STRING.ALL}'
-						| name='period' #{autofill.isAllRadioChecked} >
+						| <input id='allradiobutton' class='periodradiobuttons'
+						| type='radio' value='#{STRING.ALL}' name='period' 
+						| #{autofill.isAllRadioChecked}
+						| >
 						label(for='allradiobutton') Everything
 
 					div(data-role='fieldcontain')
-						label(for='startTime') startTime:
-							input(id='startTime', type='datetime-local', name='startTime',
-								value='#{autofill.startTime}')
+						label(for='startTimeDate') startTime:
+							input(id='startTimeDate', type='date', name='startTimeDate',
+							placeholder='yyyy-mm-dd')
+					
+						input(id='startTimeHour', type='time', name='startTimeHour',
+						placeholder='hh:mm')
 
 					div(data-role='fieldcontain')
-						label(for='endTime') endTime:
-							input(id='endTime', type='datetime-local', name='endTime',
-								value='#{autofill.endTime}')
+						label(for='endTimeDate') endTime:
+							input(id='endTimeDate', type='date', name='endTimeDate',
+							placeholder='yyyy-mm-dd')
+					
+						input(id='endTimeHour', type='time', name='endTimeHour',
+						placeholder='hh:mm')
 
 					span Method to apply to the data:
 					br
@@ -71,25 +56,25 @@ block append body
 						| <input id='sumradiobutton'  type='radio'  value='sum'
 						| name='method' #{autofill.isSumRadioChecked}>
 						label(for='sumradiobutton') Sum the data
-								
-					
-					div
-						input(id='requrl', type='hidden', value='#{autofill.url}', name='requrl')
-
-					div(data-role='fieldcontain')   
-						input(type='submit',value='Update configuration',data-transition='fade', data-theme='c')
 
 	div#chart_div
 
-	- each x in data
-		ul
-			li LS : #{x.LS}
-			li RS : #{x.RS}
-			li SS : #{x.SS}
-			li SU : #{x.SU}
-			li SD : #{x.SD}
-			li docs processed : #{x.ndocs}
-			li TS : #{x.TS}
-			li newestTS: #{x.newestTS}
-			li oldestTS: #{x.oldestTS}
+	form(name='ajaxForm')
+		input(type='button', value='Ajax call' onclick='ajaxFunction()')
+		input(type='text', name='testajax')
 
+	block javascript
+		script(src="/js/jquery-2.1.1.js")
+		include ./display.js.jade
+
+//	- each x in data
+//		ul
+//			li LS : #{x.LS}
+//			li RS : #{x.RS}
+//			li SS : #{x.SS}
+//			li SU : #{x.SU}
+//			li SD : #{x.SD}
+//			li docs processed : #{x.ndocs}
+//			li TS : #{x.TS}
+//			li newestTS: #{x.newestTS}
+//			li oldestTS: #{x.oldestTS}

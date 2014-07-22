@@ -11,17 +11,11 @@ var STRING = {
 	ALL : "All"
 };
 
+
 exports.STRING = STRING;
-exports.startTime = new Date(0);
-exports.endTime = new Date(); //refresh this each time the charts will be generated
-exports.method;
-exports.getPeriod;
-exports.method;
-exports.isSameTimePeriod;
-exports.period;
+
 exports.actions = [ "ls", "rs", "ss", "sd", "su" ];
 exports.ACTIONS = [ "LS", "RS", "SS", "SD", "SU" ];
-exports.showActions = exports.ACTIONS;
 
 var MONTHNAME = [ "January", "February", "March", "April", "May", "June", "July", "August",
 	"September", "October", "November", "December" ];
@@ -32,6 +26,14 @@ if (Object.freeze) {
 	Object.freeze(MONTHNAME);
 	Object.freeze(STRING);
 }
+
+var DEFAULT = {
+	startTime: new Date(0).toISOString(),
+	endTime: new Date().toISOString(),
+	period: "Month",
+	method: "sum",
+	showActions: exports.ACTIONS
+};
 
 var getPeriod = {};
 
@@ -77,31 +79,69 @@ isSameTimePeriod[STRING.DAY] = function(displayObject, singledoc) {
   );
 };
 
+exports.methods = methods;
+exports.getPeriod = getPeriod;
+exports.isSameTimePeriod = isSameTimePeriod;
 
-exports.updatePeriod = function(period) {
-	exports.getPeriod = getPeriod[period];
-	exports.isSameTimePeriod = isSameTimePeriod[period];
-	exports.period = period;
-};
-
-exports.defaultConfiguration = function() {
-
-	if(uninitialized) {
-		endTime = new Date(); //refresh end of time period delimiter
-
-		exports.updatePeriod(STRING.MONTH);
-		exports.method = methods.sum;
-
-		uninitialized = false;
+exports.updateConfigurationQuery = function(config, query) {
+	for (keyname in query) {
+		//console.log('keyname = ', keyname, '| query[keyname] = ', query[keyname]);
+		if (config[keyname]) {
+			//translate "default" string into the actual default configuration
+			if (query[keyname] === "default")
+				config[keyname] = DEFAULT[keyname];
+			else config[keyname] = query[keyname];
+		} else {
+			console.log('Key ', keyname, ' not defined. Skipping it.');
+		}
 	}
-  return exports;
+	console.log('config after updateQuery: ', config);
 };
 
-exports.updateConfiguration = function(startTime, endTime, period, method) {
-	uninitialized = false;
-	exports.startTime = startTime;
-	exports.endTime = endTime;
-	exports.updatePeriod(period);
-	exports.method = methods[method];
-	console.log('---config exports---', exports);
+exports.updateConfiguration = function(config, startTime, endTime, period, method, showActions) {
+		//console.log('---config this b4---', this);
+
+		config.showActions = showActions;
+		config.uninitialized = false;
+		config.unitialized = false;
+		config.period = period;
+		config.method = method;
+		//console.log('---config this after---', this);
+};
+
+defaultConfiguration = function(config) {
+	config.startTime = DEFAULT.startTime;
+	config.endTime   = DEFAULT.endTime;
+	config.period    = DEFAULT.period;
+	config.method    = DEFAULT.method;
+	config.showActions   = DEFAULT.showActions;
+};
+
+exports.newConfiguration = function () {
+
+	var configInstance = {};
+	
+//	configInstance.updateConfiguration = function(startTime, endTime, period, method, showActions) {
+//		//console.log('---config this b4---', this);
+//		this.showActions = showActions;
+//		this.uninitialized = false;
+//		this.startTime = startTime;
+//		this.endTime = endTime;
+//		this.updatePeriod(period);
+//		this.method = methods[method];
+//		//console.log('---config this after---', this);
+//	};
+
+//	configInstance.defaultConfiguration = function() {
+//
+//		//console.log('what is this?', this, 'this is configInstance?', configInstance === this);
+//		this.updateConfiguration(new Date('1979/03/03'), new Date(), STRING.MONTH,
+//			"sum", exports.ACTIONS);
+//		console.log('default configuration:', this);
+//		return this;
+//	};
+
+	defaultConfiguration(configInstance);
+	//console.log('newConfiguration generated:', configInstance);
+	return configInstance;
 };
