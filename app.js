@@ -291,17 +291,52 @@ app.post('/api/ajax/updateCharts', function(req, res, next) {
 			res.send(err);
 		} else {
 			var formattedData = charts.formatForGoogleCharts(chartData, req.session.userConfig);
+
+			var textStyle = {
+				color: '#606060',
+				fontName: 'Lato, sans-serif'};
+
+
 			var options = {
+
+				backgroundColor: '#f7f7f7',
 				title: req.session.patient,
+				titleTextStyle: textStyle,
+				textStyle: textStyle,
+				fontName: 'Lato, sans-serif',
+
+				animation: {
+					duration: 1500,
+					easing  : 'out'
+				},
+//				//not sure what annotations are
+//				annotations: {
+//					textStyle: textStyle,
+//					boxStyle: {
+//						stroke: '#D32043',
+//						strokeWidth: 1,
+//						rx: 2,
+//						ry: 2
+//					}
+				},
 				vAxis: {
 					title: req.session.userConfig.period,
-					titleTextStyle: {color: "black"}
+					titleTextStyle: textStyle,
+					textStyle: textStyle
 				},
 				hAxis: {
 					title: "Steps Accumulated",
-					titleTextStyle: {color: "black"}
+					titleTextStyle: textStyle,
+					textStyle: textStyle
+				},
+				legend: {
+					textStyle: textStyle
+				},
+				tooltip: {
+					textStyle: textStyle
 				}
 			};
+
 			res.send({chartData: formattedData, chartOptions: options});
 		}
 	});

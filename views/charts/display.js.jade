@@ -54,7 +54,7 @@ block script
 					response = JSON.parse(xmlhttp.response);
 					console.log('updateConfig onreadystatechange response: ', response);
 					updateChartData(response.chartData, response.chartOptions);
-					document.ajaxForm.testajax.value = xmlhttp.response;
+					//document.ajaxForm.testajax.value = xmlhttp.response;
 				}
 			}
 
@@ -100,12 +100,17 @@ block script
 		}
 
 		function updateTime(key, date, hour) {
-			if (date.length > 0 && hour.length > 0) {
-				console.log(date, hour);
-				dateString = date + ' ' + hour;
-				dateObject = new Date(dateString);
-				console.log(dateObject);
-				updateCharts(key,dateObject.toISOString());
+			if (date.length > 0) {
+				if (hour.length > 0) {
+					console.log(date, hour);
+					dateString = date + ' ' + hour;
+					dateObject = new Date(dateString);
+					console.log(dateObject);
+					updateCharts(key,dateObject.toISOString());
+				} else {
+					$('#' + key + 'Hour').val("00:00");
+					updateTime(key, date, "00:00");
+				}
 			}
 		}
 

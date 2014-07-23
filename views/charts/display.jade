@@ -59,14 +59,14 @@ block append body
 
 	div#chart_div
 
-	form(name='ajaxForm')
-		input(type='button', value='Ajax call' onclick='ajaxFunction()')
-		input(type='text', name='testajax')
-
 	block javascript
 		script(src="/js/jquery-2.1.1.js")
 		include ./display.js.jade
 
+//	form(name='ajaxForm')
+//		input(type='button', value='Ajax call' onclick='ajaxFunction()')
+//		input(type='text', name='testajax')
+//
 //	- each x in data
 //		ul
 //			li LS : #{x.LS}
