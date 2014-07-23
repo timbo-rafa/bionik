@@ -318,7 +318,7 @@ app.post('/api/ajax/updateCharts', function(req, res, next) {
 //						rx: 2,
 //						ry: 2
 //					}
-				},
+//				},
 				vAxis: {
 					title: req.session.userConfig.period,
 					titleTextStyle: textStyle,
