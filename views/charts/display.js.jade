@@ -47,6 +47,7 @@ block script
 		function updateChartData(newData, opt) {
 			cloudantdata = newData;
 			options = opt;
+			$('#chartdiv').css('height', 80 * cloudantdata.length + 10);
 			drawChart();
 		}
 		
@@ -61,7 +62,7 @@ block script
 			var data = google.visualization.arrayToDataTable(cloudantdata); 
 			var chart;
 			if (chart === undefined) 
-				chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+				chart = new google.visualization.BarChart(document.getElementById('chartdiv'));
 			chart.draw(data, options);
 		}
 
