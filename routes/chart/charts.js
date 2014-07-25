@@ -3,6 +3,16 @@
 configMaster = require('./config');
 methods = require('./methods');
 
+FULLNAME = {
+	LS: 'Left step(s)',
+	RS: 'Right step(s)',
+	SS: 'Continuous step(s)',
+	SU: 'Sit down(s)',
+	SD: 'Stand up(s)',
+	TN: 'Trajectory number',
+	TS: 'Timestamp'
+};
+
 var constructDisplayObject = function(doc, userConfig) {
 	var objectDate = new Date(doc.doc.TS);
 	displayObject = {
@@ -136,7 +146,8 @@ exports.formatForGoogleCharts = function(allDisplayObjects, config) {
 //          ,  '#{action}'
 //  |     ],  
 	for (actionidx in config.showActions) {
-		header.push(config.showActions[actionidx]);	
+		var actionAcronym = config.showActions[actionidx];
+		header.push(configMaster.FULLNAME[actionAcronym]);	
 	}
 	googleChartsFormattedData.push(header);
 

@@ -11,11 +11,21 @@ var STRING = {
 	ALL : "All"
 };
 
-
 exports.STRING = STRING;
 
 exports.actions = [ "ls", "rs", "ss", "sd", "su" ];
 exports.ACTIONS = [ "LS", "RS", "SS", "SD", "SU" ];
+
+exports.FULLNAME = {
+	LS: 'Left step(s)',
+	RS: 'Right step(s)',
+	SS: 'Continuous step(s)',
+	SU: 'Sit down(s)',
+	SD: 'Stand up(s)',
+	TN: 'Trajectory number',
+	TS: 'Timestamp'
+};
+
 
 var MONTHNAME = [ "January", "February", "March", "April", "May", "June", "July", "August",
 	"September", "October", "November", "December" ];
