@@ -118,3 +118,7 @@ div#ajax-info {
 div#chart_div {
 	height: 600px;
 }
+
+p.var, div.var {
+	display:none;
+}

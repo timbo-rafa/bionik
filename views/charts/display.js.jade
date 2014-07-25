@@ -6,6 +6,13 @@ block script
 	script(src='https://www.google.com/jsapi')
 	script.
 		var ENTER_KEY = 13;
+		var config = {};
+		cloudantdata = [];
+		var options = { 
+			title: 'Steps Acummulated',
+			hAxis: {title: '#{config.period}', titleTextStyle: {color: 'black'}}
+		};
+
 		function dateFormat(date) {
 			DATESEPARATOR = '-';
 			return date.getFullYear() + DATESEPARATOR +
@@ -24,7 +31,7 @@ block script
 				url: '/api/ajax/updateCharts?' + key + '=' + value
 			}).done(function(response, textStatus, xhr) {
 				console.log('updateConfig onreadystatechange response: ', response);
-				updateChartData(response.chartData, response.chartOptions);
+				updateChartData(response.chartData, response.chartConfig);
 				//document.ajaxForm.testajax.value = xmlhttp.response;
 			}).fail(function(xhr, textStatus, errorThrown) {
 			}).always(function() {
@@ -37,17 +44,48 @@ block script
 
 		google.load("visualization", "1", {packages:["corechart"]});
 		google.setOnLoadCallback(init);
-
-		cloudantdata = [];
-		var options = { 
-			title: 'Steps Acummulated',
-			hAxis: {title: '#{config.period}', titleTextStyle: {color: 'black'}}
-		};
 		
-		function updateChartData(newData, opt) {
+		function getOptions() {
+			var textStyle = {
+				color: '#606060',
+				fontName: 'Lato, sans-serif'};
+
+			var options = {
+
+				backgroundColor: '#f7f7f7',
+				chartArea: {
+					height: '90%'
+				},
+				title: config.patient + ' statistics',
+				titleTextStyle: textStyle,
+				textStyle: textStyle,
+				fontName: textStyle.fontName,
+
+				vAxis: {
+					title: config.patient + 'statistics',
+					titleTextStyle: textStyle,
+					textStyle: textStyle
+				},
+				hAxis: {
+					title: "Steps Accumulated",
+					titleTextStyle: textStyle,
+					textStyle: textStyle
+				},
+				legend: {
+					textStyle: textStyle
+				},
+				tooltip: {
+					textStyle: textStyle
+				}
+			};
+			return options;
+		}
+
+		function updateChartData(newData, newConfig) {
 			cloudantdata = newData;
-			options = opt;
-			$('#chartdiv').css('height', 80 * cloudantdata.length + 10);
+			config = newConfig;
+			options = getOptions();
+			$('#chartdiv').css('height', 100 * cloudantdata.length + 10);
 			drawChart();
 		}
 		
@@ -120,13 +158,15 @@ block script
 				//console.log('period=', e.target.value);
 				updateCharts("period", e.target.value);
 			});
+
+			$('#test').text($('#pn').text())
 		});
-//			$( "#ajax-info" ).dialog({
-//					autoOpen: false,
-//					show: {
-//						duration: 300
-//					},
-//					hide: {
-//						duration: 500
-//					}
-//			});
+		//			$( "#ajax-info" ).dialog({
+		//					autoOpen: false,
+		//					show: {
+		//						duration: 300
+		//					},
+		//					hide: {
+		//						duration: 500
+		//					}
+		//			});

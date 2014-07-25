@@ -205,6 +205,7 @@ exports.summary = function(req, res, next) {
 	console.log('exports.summary. patient:', req.params.patient);
 	req.session.patient = req.params.patient;
 	req.session.userConfig = sessionConfig(req.session);
+	req.session.userConfig.patient = req.params.patient;
 	var userConfig = req.session.userConfig;
 	res.render('charts/display', {
 		msg: msg,
