@@ -94,10 +94,6 @@ a:hover {
   color: #606060;
 }
 
-div#configmenudiv {
-	top: 10px;
-}
-
 div#ajax-info {
 	position:fixed;
 	top:0;
