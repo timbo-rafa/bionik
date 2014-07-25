@@ -94,6 +94,31 @@ a:hover {
   color: #606060;
 }
 
+div#configmenudiv {
+	top: 10px;
+}
+
+div#ajax-info {
+	position:fixed;
+	top:0;
+	text-align: center;
+	margin: auto;
+	width: 100%;
+	display:none;
+	z-index: 1000;
+	background: #fefcea; /* Old browsers */
+	background: -moz-linear-gradient(top,  #fefcea 0%, #f1da36 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fefcea), color-stop(100%,#f1da36)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #fefcea 0%,#f1da36 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #fefcea 0%,#f1da36 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #fefcea 0%,#f1da36 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #fefcea 0%,#f1da36 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', endColorstr='#f1da36',GradientType=0 ); /* IE6-9 */
+	-webkit-transition: visibility 1400ms ease-in;
+	-moz-transition: visibility 1400ms ease-in;
+	transition: visibility 1400ms ease-in;
+}
+
 div#chart_div {
 	height: 1000px;
 }

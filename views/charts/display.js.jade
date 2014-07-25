@@ -1,4 +1,8 @@
 block script
+	link(rel='stylesheet' href='//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/smoothness/jquery-ui.css')
+	script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')
+	script(src='//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js')
+	script(src='http://cdnjs.cloudflare.com/ajax/libs/gsap/1.13.1/TweenMax.min.js')
 	script(src='https://www.google.com/jsapi')
 	script.
 		var ENTER_KEY = 13;
@@ -12,55 +16,23 @@ block script
 			return date.getHours() + ':' + date.getMinutes();
 		}
 
-		$().ready(function() {
-			now = new Date();
-			$('#endTimeDate').val(dateFormat(now));
-			$('#endTimeHour').val(timeFormat(now));
-			now.setFullYear(now.getFullYear(), now.getMonth() - 1);
-			$('#startTimeDate').val(dateFormat(now));
-			$('#startTimeHour').val(timeFormat(now));
-		});
-
-		function newAjaxRequest() {
-			var xmlhttp;
-			try{
-				// Opera 8.0+, Firefox, Safari
-				xmlhttp = new XMLHttpRequest();
-			} catch (e){
-				// Internet Explorer Browsers
-				try{
-					xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-				} catch (e) {
-					try{
-						xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-					} catch (e){
-						// Something went wrong
-						alert("Your browser broke!");
-						return false;
-					}	 
-				}	 
-			}
-			
-			return xmlhttp; 
-		}
-
 		function updateCharts(key, value) {
-			var xmlhttp = newAjaxRequest();
 
-			if (!xmlhttp) return false;
-
-			xmlhttp.onreadystatechange = function() {
-				if (xmlhttp.readyState == 4) {
-					response = JSON.parse(xmlhttp.response);
-					console.log('updateConfig onreadystatechange response: ', response);
-					updateChartData(response.chartData, response.chartOptions);
-					//document.ajaxForm.testajax.value = xmlhttp.response;
-				}
-			}
-
-			xmlhttp.open("POST", "/api/ajax/updateCharts?" + key + "=" + value, true);
-			xmlhttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
-			xmlhttp.send();
+			$('#ajax-info').show(500, 'swing');
+			$.ajax({
+				type: 'POST',
+				url: '/api/ajax/updateCharts?' + key + '=' + value
+			}).done(function(response, textStatus, xhr) {
+				console.log('updateConfig onreadystatechange response: ', response);
+				updateChartData(response.chartData, response.chartOptions);
+				//document.ajaxForm.testajax.value = xmlhttp.response;
+			}).fail(function(xhr, textStatus, errorThrown) {
+			}).always(function() {
+				$('#ajax-info-loading').text('Chart ready!');
+				setTimeout(function(){
+					$('#ajax-info').hide(1000, 'swing');
+				}, 800);
+			});
 		}
 
 		google.load("visualization", "1", {packages:["corechart"]});
@@ -70,7 +42,7 @@ block script
 		var options = { 
 			title: 'Steps Acummulated',
 			hAxis: {title: '#{config.period}', titleTextStyle: {color: 'black'}}
-		};	
+		};
 		
 		function updateChartData(newData, opt) {
 			cloudantdata = newData;
@@ -87,7 +59,9 @@ block script
 			console.log('typeof ', typeof cloudantdata);
 			console.log(cloudantdata);
 			var data = google.visualization.arrayToDataTable(cloudantdata); 
-			var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+			var chart;
+			if (chart === undefined) 
+				chart = new google.visualization.BarChart(document.getElementById('chart_div'));
 			chart.draw(data, options);
 		}
 
@@ -108,31 +82,50 @@ block script
 					console.log(dateObject);
 					updateCharts(key,dateObject.toISOString());
 				} else {
-					$('#' + key + 'Hour').val("00:00");
+					//$('#' + key + 'Hour').val("00:00");
 					updateTime(key, date, "00:00");
 				}
 			}
 		}
 
-		$('#startTimeDate, #startTimeHour').keyup(function(e) {
-			if (e.which === ENTER_KEY) {
-				updateTime("startTime", $('#startTimeDate').val(), $('#startTimeHour').val());
-			}
-		});
+		$().ready(function() {
+			now = new Date();
+			$('#endTimeDate').val(dateFormat(now));
+			$('#endTimeHour').val(timeFormat(now));
+			now.setFullYear(now.getFullYear(), now.getMonth() - 1);
+			$('#startTimeDate').val(dateFormat(now));
+			$('#startTimeHour').val(timeFormat(now));
 
-		$('#endTimeDate, #endTimeHour').keyup(function(e) {
-			if (e.which === ENTER_KEY) {
-				updateTime("endTime", $('#endTimeDate').val(), $('#endTimeHour').val());
-			}
-		});
+		// Event Handlers
+			$('#startTimeDate, #startTimeHour').keyup(function(e) {
+				if (e.which === ENTER_KEY) {
+					updateTime("startTime", $('#startTimeDate').val(), $('#startTimeHour').val());
+				}
+			});
 
-		$('#startTimeDate, #startTimeHour, #endTimeDate, #endTimeHour').blur(function(e) {
-			var e = jQuery.Event("keyup");
-			e.which = ENTER_KEY;
-			$(this).trigger(e);
-		});
+			$('#endTimeDate, #endTimeHour').keyup(function(e) {
+				if (e.which === ENTER_KEY) {
+					updateTime("endTime", $('#endTimeDate').val(), $('#endTimeHour').val());
+				}
+			});
 
-		$('.periodradiobuttons').click(function(e) {
-			//console.log('period=', e.target.value);
-			updateCharts("period", e.target.value);
+			$('#startTimeDate, #startTimeHour, #endTimeDate, #endTimeHour').blur(function(e) {
+				var e = jQuery.Event("keyup");
+				e.which = ENTER_KEY;
+				$(this).trigger(e);
+			});
+
+			$('.periodradiobuttons').click(function(e) {
+				//console.log('period=', e.target.value);
+				updateCharts("period", e.target.value);
+			});
 		});
+//			$( "#ajax-info" ).dialog({
+//					autoOpen: false,
+//					show: {
+//						duration: 300
+//					},
+//					hide: {
+//						duration: 500
+//					}
+//			});

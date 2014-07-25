@@ -57,10 +57,12 @@ block append body
 						| name='method' #{autofill.isSumRadioChecked}>
 						label(for='sumradiobutton') Sum the data
 
+	div#ajax-info(class='info-box')
+		p#ajax-info-loading Updating the chart...
+
 	div#chart_div
 
 	block javascript
-		script(src="/js/jquery-2.1.1.js")
 		include ./display.js.jade
 
 //	form(name='ajaxForm')

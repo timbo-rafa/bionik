@@ -299,16 +299,22 @@ app.post('/api/ajax/updateCharts', function(req, res, next) {
 
 			var options = {
 
+//				bar: {
+//					groupWidth: '61.8%'
+//				},
 				backgroundColor: '#f7f7f7',
+				chartArea: {
+					height: '90%'
+				},
 				title: req.session.patient,
 				titleTextStyle: textStyle,
 				textStyle: textStyle,
 				fontName: 'Lato, sans-serif',
 
-				animation: {
-					duration: 1500,
-					easing  : 'out'
-				},
+//				animation: {
+//					duration: 2000,
+//					easing  : 'out'
+//				},
 //				//not sure what annotations are
 //				annotations: {
 //					textStyle: textStyle,
