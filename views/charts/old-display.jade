@@ -1,0 +1,92 @@
+extends ../base
+
+block append body
+	if msg
+		span #{msg}
+	
+	header#header
+		block header
+			a#logo(href='/')
+				div#logo
+			a#logo-text-anchor(href='/')
+				div#logo-text
+		div#configmenudiv
+			block menu
+				form#configform(name="configform", onsubmit='return false;')
+						div#periodradiodiv(data-role='fieldcontain')
+							span Each chart will represent the data of
+							br
+							|<input id='dayradiobutton' class='periodradiobuttons'
+							| type='radio' value='#{STRING.DAY}' name='period' 
+							| #{autofill.isDayRadioChecked}
+							| >
+							label(for='dayradiobutton') Day
+							br
+							| <input id='monthradiobutton' class='periodradiobuttons'
+							| type='radio' value='#{STRING.MONTH}' name='period' 
+							| #{autofill.isMonthRadioChecked}
+							| >
+							label(for='monthradiobutton') Month
+							br
+							|<input id='yearradiobutton' class='periodradiobuttons'
+							| type='radio' value='#{STRING.YEAR}' name='period' 
+							| #{autofill.isYearRadioChecked}
+							| >
+							label(for='yearradiobutton') Year
+							br
+							| <input id='allradiobutton' class='periodradiobuttons'
+							| type='radio' value='#{STRING.ALL}' name='period' 
+							| #{autofill.isAllRadioChecked}
+							| >
+							label(for='allradiobutton') Everything
+
+						div(data-role='fieldcontain')
+							label(for='startTimeDate') startTime:
+								input(id='startTimeDate', type='date', name='startTimeDate',
+								placeholder='yyyy-mm-dd')
+						
+							input(id='startTimeHour', type='time', name='startTimeHour',
+							placeholder='hh:mm')
+
+						div(data-role='fieldcontain')
+							label(for='endTimeDate') endTime:
+								input(id='endTimeDate', type='date', name='endTimeDate',
+								placeholder='yyyy-mm-dd')
+						
+							input(id='endTimeHour', type='time', name='endTimeHour',
+							placeholder='hh:mm')
+
+						span Method to apply to the data:
+						br
+						div(data-role='fieldcontain')
+							| <input id='sumradiobutton'  type='radio'  value='sum'
+							| name='method' #{autofill.isSumRadioChecked}>
+							label(for='sumradiobutton') Sum the data
+
+	div#ajax-info(class='info-box')
+		p#ajax-info-loading Updating the chart...
+
+	div#chartdiv
+
+	block javascript
+		include ./display.js.jade
+
+	footer#footer
+		block footer
+			p#test
+
+//	form(name='ajaxForm')
+//		input(type='button', value='Ajax call' onclick='ajaxFunction()')
+//		input(type='text', name='testajax')
+//
+//	- each x in data
+//		ul
+//			li LS : #{x.LS}
+//			li RS : #{x.RS}
+//			li SS : #{x.SS}
+//			li SU : #{x.SU}
+//			li SD : #{x.SD}
+//			li docs processed : #{x.ndocs}
+//			li TS : #{x.TS}
+//			li newestTS: #{x.newestTS}
+//			li oldestTS: #{x.oldestTS}

@@ -1,0 +1,356 @@
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+
+@import "compass";
+@import "compass/reset";
+@import url("http://fonts.googleapis.com/css?family=Lato:100,300,400,700");
+@import "animation.scss";
+
+$light-red: #D1909C;
+$red      : #d32043;
+$gray     : #f7f7f7;
+$dark-gray: #606060;
+$yellow   : yellow;
+
+$info-light-color: #f5f599;//rgb(43,194,83);
+$info-dark-color : #ffdd22;//rgb(84,240,84);
+
+body {
+  font-family: Lato, sans-serif;
+  font-size: 1rem;
+  line-height: 100%;
+  color: $dark-gray;
+  background: $gray;
+  font-weight: 300;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: $dark-gray;
+}
+
+h1 {
+  color: #fff;
+  font-size: 2.2rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+h3 {
+  font-size: 1.3rem;
+}
+
+a {
+  color: $red;
+  text-decoration: none;
+	@include transition(color .25s);
+}
+
+a:hover {
+  color: $dark-gray;
+}
+
+header.header {
+	position: absolute;
+	top:0;
+	width: 100%;
+	height: 50px;
+	background: $gray;
+	border-bottom: 2px solid $red;
+	z-index: 100;
+}
+
+header div.header-container {
+	margin-left: auto;
+	margin-right: auto;
+	padding: 0 3%;
+	background-size: auto;
+}
+
+header div.header-logo {
+	position: absolute;
+	width:17.5%;
+	height: 100%;
+	left: 0;
+	background-size: auto;
+}
+
+header div.header-config {
+	float: right;
+	height: 100%;
+	width: 82.5%;
+  margin-right: 1.69492%;
+	margin-left: 1em;
+}
+
+header div#div-logo-img {
+/*	margin-top: 20px; */
+/*	margin-left: 50px; */
+	float: left;
+	height: 100%;
+	width: 25%;
+	background-image: url('../img/bioniklogo.svg');
+  background-repeat: no-repeat;
+  background-position:right top;
+  background-size: contain;
+}
+
+header div#div-logo-text {
+	float: left;
+	height: 100%;
+	width: 75%;
+	left: 0;
+	background-image: url('../img/bioniklogotext.svg');
+	background-repeat: no-repeat;
+	background-position: left top;
+	background-size: contain;
+}
+
+header ul.header-list {
+	padding-top: 15px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	line-height: 1;
+	display: block;
+}
+
+//cssmenu
+header ul.header-list:after{
+	content: "";
+	display: block;
+	font-size: 0;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+
+header ul.header-list li {
+	display:inline-block;
+	padding-right: 10px;
+	margin: 0;
+}
+
+//cssmenu
+header ul.header-list a {
+	display:block;
+	padding-top: 15px;
+	padding-bottom:15px;
+	font-weight: 700;
+	padding-right: 35px;
+	padding-left: 35px;
+	text-transform: uppercase;
+	font-size: 14px;
+	position: relative;
+}
+
+@media (max-width:1700px) {
+	header ul.header-list a {
+		padding-right: 25px;
+		padding-left: 25px;
+	}
+}
+
+@media (max-width:1550px) {
+	header ul.header-list a {
+		padding-right: 10px;
+		padding-left: 10px;
+	}
+}
+
+@media (max-width:1350px) {
+	header ul.header-list a {
+		padding-right: 0;
+		padding-left: 5px;
+	}
+}
+
+@media (max-width:1000px) {
+	header ul.header-list a {
+		padding-right: 0;
+		padding-left: 1px;
+	}
+}
+
+//cssmenu
+//header ul li a:after {
+//	content:"a";
+//	display:block;
+//	position:absolute;
+//	right: -3px;
+//	top: 19px;
+//	height: 6px;
+//	width: 6px;
+//	background: #ffffff;
+//	opacity: 1;
+//}
+
+//cssmenu
+// Draws the line under the element when :hover
+header ul.header-list li a:hover:before {
+	width: 100%;
+}
+header ul li a:before {
+	content: "";
+	display: block;
+	position: absolute;
+	left:0;
+	bottom: 0;
+	height: 3px;
+	width: 0;
+	background: $dark-gray;
+	@include transition(width .25s);
+}
+header ul li a#active {
+  color: $dark-gray;
+}
+header ul li a#active:before {
+  width: 100%;
+}
+
+header ul.header-list li:first-child {
+	padding-left: 0;
+}
+
+header ul.header-list li:last-child {
+	padding-right: 0;
+}
+
+div#body {
+	margin-top: 52px;
+	overflow:hidden; // <<<<<<<<<<
+}
+
+footer.footer {
+	position: fixed;
+	bottom:0;
+	height: 25px;
+	border-top: 2px solid red;
+	z-index: 103;
+	background-color: $gray;
+	@include transition(background-color 2s linear);
+}
+
+div.info-box {
+	position:fixed;
+	text-vertical-align: center;
+	text-align: center;
+	font-size: 1.2em;
+	margin: 0;
+	height: 100%;
+	width: 100%;
+	color: $dark-gray;
+	z-index: 101;
+}
+
+div#chart_div {
+	overflow: auto;
+}
+
+p.var, div.var {
+	display:none;
+}
+
+// Animation bar on footer
+
+.meter { 
+	height: 25px;  // Can be anything
+	position: relative;
+	-webkit-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
+	-moz-box-shadow   : inset 0 -1px 1px rgba(255,255,255,0.3);
+	box-shadow        : inset 0 -1px 1px rgba(255,255,255,0.3);
+}
+
+.meter > span {
+	display: block;
+	height: 100%;
+	background-color: $red;
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0, $info-light-color),
+		color-stop(1, $info-dark-color)
+	 );
+	background-image: -moz-linear-gradient(
+		center bottom,
+		$info-light-color 37%,
+		$info-dark-color 69%
+	 );
+	-webkit-box-shadow: 
+		inset 0 2px 9px  rgba(255,255,255,0.3),
+		inset 0 -2px 6px rgba(0,0,0,0.4);
+	-moz-box-shadow: 
+		inset 0 2px 9px  rgba(255,255,255,0.3),
+		inset 0 -2px 6px rgba(0,0,0,0.4);
+	box-shadow: 
+		inset 0 2px 9px  rgba(255,255,255,0.3),
+		inset 0 -2px 6px rgba(0,0,0,0.4);
+	position: relative;
+	overflow: hidden;
+}
+.meter > span:after, .animate > span > span {
+	content: "";
+	position: absolute;
+	top: 0; left: 0; bottom: 0; right: 0;
+	background-image: 
+		 -webkit-gradient(linear, 0 0, 100% 100%, 
+				color-stop(.25, rgba(255, 255, 255, .2)), 
+				color-stop(.25, transparent), color-stop(.5, transparent), 
+				color-stop(.5, rgba(255, 255, 255, .2)), 
+				color-stop(.75, rgba(255, 255, 255, .2)), 
+				color-stop(.75, transparent), to(transparent)
+		 );
+	background-image: 
+		-moz-linear-gradient(
+			-45deg, 
+				rgba(255, 255, 255, .2) 25%, 
+				transparent 25%, 
+				transparent 50%, 
+				rgba(255, 255, 255, .2) 50%, 
+				rgba(255, 255, 255, .2) 75%, 
+				transparent 75%, 
+				transparent
+		 );
+	z-index: 1;
+	-moz-background-size: 50px 50px;
+	-moz-border-radius-bottomleft: 20px;
+	-moz-border-radius-bottomright: 8px;
+	-moz-border-radius-topleft: 20px;
+	-moz-border-radius-topright: 8px;
+	-webkit-animation: move 2s linear infinite;
+	-webkit-background-size: 50px 50px;
+	-webkit-border-bottom-left-radius: 20px;
+	-webkit-border-bottom-right-radius: 8px;
+	-webkit-border-top-left-radius: 20px;
+	-webkit-border-top-right-radius: 8px;
+	border-bottom-left-radius: 20px;
+	border-bottom-right-radius: 8px;
+	border-top-left-radius: 20px;
+	border-top-right-radius: 8px;
+	overflow: hidden;
+}
+
+.animate > span:after {
+	display: none;
+}
+
+@-webkit-keyframes move {
+		0% {
+			 background-position: 0 0;
+		}
+		100% {
+			 background-position: 50px 50px;
+		}
+}
+
+.red > span {
+	background-color: #f0a3a3;
+	background-image: -moz-linear-gradient(top, #f0a3a3, #f42323);
+	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #f0a3a3),color-stop(1, #f42323));
+	background-image: -webkit-linear-gradient(#f0a3a3, #f42323);
+}
+

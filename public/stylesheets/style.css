@@ -1,124 +1,61 @@
-/* style.css
- * This file provides css styles.
- */
+/*
+Syntax error: File to import not found or unreadable: compass.
+              Load path: /home/rafael/work/bionik (DEPRECATED)
+        on line 5 of public/stylesheets/style.scss
 
-@import url("http://fonts.googleapis.com/css?family=Lato:100,300,400,700");
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font: inherit;
-  font-size: 100%;
-  vertical-align: baseline;
-}
+1: /* style.css
+2:  * This file provides css styles.
+3:  *\/
+4: 
+5: @import "compass";
+6: @import url("http://fonts.googleapis.com/css?family=Lato:100,300,400,700");
+7: html, body, div, span, applet, object, iframe,
+8: h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+9: a, abbr, acronym, address, big, cite, code,
+10: del, dfn, em, img, ins, kbd, q, s, samp,
 
-html {
-  line-height: 1;
-}
-
-ol, ul {
-  list-style: none;
-}
-
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-
-caption, th, td {
-  text-align: left;
-  font-weight: normal;
-  vertical-align: middle;
-}
-
-q, blockquote {
-  quotes: none;
-}
-q:before, q:after, blockquote:before, blockquote:after {
-  content: "";
-  content: none;
-}
-
-a img {
-  border: none;
-}
-
-article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
-  display: block;
-}
-
-body {
-  font-family: Lato, sans-serif;
-  font-size: 1rem;
-  line-height: 100%;
-  color: #606060;
-  background: #f7f7f7;
-  font-weight: 300;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  color: #606060;
-}
-
-h1 {
-  color: #fff;
-  font-size: 2.2rem;
-}
-
-h2 {
-  font-size: 1.5rem;
-}
-
-h3 {
-  font-size: 1.3rem;
-}
-
-a {
-  color: #d32043;
-  text-decoration: none;
-}
-
-a:hover {
-  color: #606060;
-}
-
-div#ajax-info {
-	position:fixed;
-	top:0;
-	text-align: center;
-	margin: auto;
-	width: 100%;
-	display:none;
-	z-index: 1000;
-	background: #fefcea; /* Old browsers */
-	background: -moz-linear-gradient(top,  #fefcea 0%, #f1da36 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fefcea), color-stop(100%,#f1da36)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  #fefcea 0%,#f1da36 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  #fefcea 0%,#f1da36 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  #fefcea 0%,#f1da36 100%); /* IE10+ */
-	background: linear-gradient(to bottom,  #fefcea 0%,#f1da36 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', endColorstr='#f1da36',GradientType=0 ); /* IE6-9 */
-	-webkit-transition: visibility 1400ms ease-in;
-	-moz-transition: visibility 1400ms ease-in;
-	transition: visibility 1400ms ease-in;
-}
-
-div#chart_div {
-	height: 600px;
-}
-
-p.var, div.var {
-	display:none;
-}
+Backtrace:
+public/stylesheets/style.scss:5
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/import_node.rb:66:in `rescue in import'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/import_node.rb:45:in `import'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/import_node.rb:28:in `imported_file'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/import_node.rb:37:in `css_import?'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/visitors/perform.rb:283:in `visit_import'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/visitors/base.rb:36:in `visit'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/visitors/perform.rb:152:in `block in visit'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/stack.rb:79:in `block in with_base'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/stack.rb:121:in `with_frame'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/stack.rb:79:in `with_base'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/visitors/perform.rb:152:in `visit'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/visitors/base.rb:52:in `block in visit_children'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/visitors/base.rb:52:in `map'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/visitors/base.rb:52:in `visit_children'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/visitors/perform.rb:161:in `block in visit_children'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/visitors/perform.rb:173:in `with_environment'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/visitors/perform.rb:160:in `visit_children'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/visitors/base.rb:36:in `block in visit'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/visitors/perform.rb:180:in `visit_root'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/visitors/base.rb:36:in `visit'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/visitors/perform.rb:151:in `visit'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/visitors/perform.rb:8:in `visit'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/root_node.rb:36:in `css_tree'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/tree/root_node.rb:20:in `render'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/engine.rb:274:in `render'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/plugin/compiler.rb:479:in `update_stylesheet'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/plugin/compiler.rb:214:in `block in update_stylesheets'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/plugin/compiler.rb:208:in `each'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/plugin/compiler.rb:208:in `update_stylesheets'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/plugin/compiler.rb:290:in `watch'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/plugin.rb:108:in `method_missing'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/exec.rb:509:in `watch_or_update'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/exec.rb:346:in `process_result'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/exec.rb:43:in `parse'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/lib/sass/exec.rb:22:in `parse!'
+/var/lib/gems/1.9.1/gems/sass-3.3.12/bin/sass:13:in `<top (required)>'
+/usr/local/bin/sass:23:in `load'
+/usr/local/bin/sass:23:in `<main>'
+*/
+body:before {
+  white-space: pre;
+  font-family: monospace;
+  content: "Syntax error: File to import not found or unreadable: compass.\A               Load path: /home/rafael/work/bionik (DEPRECATED)\A         on line 5 of public/stylesheets/style.scss\A \A 1: /* style.css\A 2:  * This file provides css styles.\A 3:  */\A 4: \A 5: @import \"compass\";\A 6: @import url(\"http://fonts.googleapis.com/css?family=Lato:100,300,400,700\");\A 7: html, body, div, span, applet, object, iframe,\A 8: h1, h2, h3, h4, h5, h6, p, blockquote, pre,\A 9: a, abbr, acronym, address, big, cite, code,\A 10: del, dfn, em, img, ins, kbd, q, s, samp,"; }
