@@ -4,17 +4,28 @@ var methods = require('./methods.js');
 
 var uninitialized = true;
 
-var STRING = {
-	DAY : "Day",
-	MONTH : "Month",
-	YEAR : "Year",
-	ALL : "All"
-};
-
-exports.STRING = STRING;
-
 exports.actions = [ "ls", "rs", "ss", "sd", "su" ];
 exports.ACTIONS = [ "LS", "RS", "SS", "SD", "SU" ];
+
+var STRING = {
+	DAY : "day",
+	MONTH : "month",
+	YEAR : "year",
+	ALL : "all",
+	SUM : "sum"
+};
+
+var DEFAULT = {
+	starttime: new Date(0).toISOString(),
+	endtime: new Date().toISOString(),
+	period: STRING.DAY,
+	method: STRING.SUM,
+	showactions: exports.ACTIONS
+};
+
+STRING.DEFAULT = DEFAULT;
+exports.STRING = STRING;
+
 
 exports.FULLNAME = {
 	LS: 'Left step(s)',
@@ -36,14 +47,6 @@ if (Object.freeze) {
 	Object.freeze(MONTHNAME);
 	Object.freeze(STRING);
 }
-
-var DEFAULT = {
-	startTime: new Date(0).toISOString(),
-	endTime: new Date().toISOString(),
-	period: "Month",
-	method: "sum",
-	showActions: exports.ACTIONS
-};
 
 var getPeriod = {};
 
@@ -95,9 +98,11 @@ exports.isSameTimePeriod = isSameTimePeriod;
 
 exports.updateConfigurationQuery = function(config, query) {
 	for (keyname in query) {
+		keyname = keyname.toLowerCase();
 		//console.log('keyname = ', keyname, '| query[keyname] = ', query[keyname]);
 		if (config[keyname]) {
 			//translate "default" string into the actual default configuration
+			query[keyname] = query[keyname].toLowerCase();
 			if (query[keyname] === "default")
 				config[keyname] = DEFAULT[keyname];
 			else config[keyname] = query[keyname];
@@ -108,10 +113,10 @@ exports.updateConfigurationQuery = function(config, query) {
 	console.log('config after updateQuery: ', config);
 };
 
-exports.updateConfiguration = function(config, startTime, endTime, period, method, showActions) {
+exports.updateConfiguration = function(config, starttime, endtime, period, method, showactions) {
 		//console.log('---config this b4---', this);
 
-		config.showActions = showActions;
+		config.showactions = showactions;
 		config.uninitialized = false;
 		config.unitialized = false;
 		config.period = period;
@@ -120,23 +125,23 @@ exports.updateConfiguration = function(config, startTime, endTime, period, metho
 };
 
 defaultConfiguration = function(config) {
-	config.startTime = DEFAULT.startTime;
-	config.endTime   = DEFAULT.endTime;
+	config.starttime = DEFAULT.starttime;
+	config.endtime   = DEFAULT.endtime;
 	config.period    = DEFAULT.period;
 	config.method    = DEFAULT.method;
-	config.showActions   = DEFAULT.showActions;
+	config.showactions   = DEFAULT.showactions;
 };
 
 exports.newConfiguration = function () {
 
 	var configInstance = {};
 	
-//	configInstance.updateConfiguration = function(startTime, endTime, period, method, showActions) {
+//	configInstance.updateConfiguration = function(starttime, endtime, period, method, showactions) {
 //		//console.log('---config this b4---', this);
-//		this.showActions = showActions;
+//		this.showactions = showactions;
 //		this.uninitialized = false;
-//		this.startTime = startTime;
-//		this.endTime = endTime;
+//		this.starttime = starttime;
+//		this.endtime = endtime;
 //		this.updatePeriod(period);
 //		this.method = methods[method];
 //		//console.log('---config this after---', this);

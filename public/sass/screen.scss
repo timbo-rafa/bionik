@@ -227,26 +227,34 @@ div#body {
 footer.footer {
 	position: fixed;
 	bottom:0;
-	height: 25px;
-	border-top: 2px solid red;
+	height: 50px;
+	width: 100%;
 	z-index: 103;
-	background-color: $gray;
-	@include transition(background-color 2s linear);
+	padding: 0;
+	margin: 0;
 }
 
 div.info-box {
 	position:fixed;
+	bottom: 0;
 	text-vertical-align: center;
 	text-align: center;
 	font-size: 1.2em;
 	margin: 0;
-	height: 100%;
+	height: 25px;
 	width: 100%;
 	color: $dark-gray;
-	z-index: 101;
+	z-index: 104;
 }
 
-div#chart_div {
+div.bottom-bg-color {
+	position: relative;
+	height: 100%;
+	width: 100%;
+	z-index: 103;
+}
+
+div#chartdiv {
 	overflow: auto;
 }
 
@@ -256,101 +264,46 @@ p.var, div.var {
 
 // Animation bar on footer
 
-.meter { 
-	height: 25px;  // Can be anything
-	position: relative;
-	-webkit-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
-	-moz-box-shadow   : inset 0 -1px 1px rgba(255,255,255,0.3);
-	box-shadow        : inset 0 -1px 1px rgba(255,255,255,0.3);
+// Add browser prefixes to animations
+@mixin animation($animate...) {
+    $max: length($animate);
+    $animations: '';
+
+    @for $i from 1 through $max {
+        $animations: #{$animations + nth($animate, $i)};
+
+        @if $i < $max {
+            $animations: #{$animations + ", "};
+        }
+    }
+    -webkit-animation: $animations;
+    -moz-animation:    $animations;
+    -o-animation:      $animations;
+    animation:         $animations;
 }
 
-.meter > span {
-	display: block;
-	height: 100%;
-	background-color: $red;
-	background-image: -webkit-gradient(
-		linear,
-		left bottom,
-		left top,
-		color-stop(0, $info-light-color),
-		color-stop(1, $info-dark-color)
-	 );
-	background-image: -moz-linear-gradient(
-		center bottom,
-		$info-light-color 37%,
-		$info-dark-color 69%
-	 );
-	-webkit-box-shadow: 
-		inset 0 2px 9px  rgba(255,255,255,0.3),
-		inset 0 -2px 6px rgba(0,0,0,0.4);
-	-moz-box-shadow: 
-		inset 0 2px 9px  rgba(255,255,255,0.3),
-		inset 0 -2px 6px rgba(0,0,0,0.4);
-	box-shadow: 
-		inset 0 2px 9px  rgba(255,255,255,0.3),
-		inset 0 -2px 6px rgba(0,0,0,0.4);
-	position: relative;
-	overflow: hidden;
-}
-.meter > span:after, .animate > span > span {
-	content: "";
-	position: absolute;
-	top: 0; left: 0; bottom: 0; right: 0;
-	background-image: 
-		 -webkit-gradient(linear, 0 0, 100% 100%, 
-				color-stop(.25, rgba(255, 255, 255, .2)), 
-				color-stop(.25, transparent), color-stop(.5, transparent), 
-				color-stop(.5, rgba(255, 255, 255, .2)), 
-				color-stop(.75, rgba(255, 255, 255, .2)), 
-				color-stop(.75, transparent), to(transparent)
-		 );
-	background-image: 
-		-moz-linear-gradient(
-			-45deg, 
-				rgba(255, 255, 255, .2) 25%, 
-				transparent 25%, 
-				transparent 50%, 
-				rgba(255, 255, 255, .2) 50%, 
-				rgba(255, 255, 255, .2) 75%, 
-				transparent 75%, 
-				transparent
-		 );
-	z-index: 1;
-	-moz-background-size: 50px 50px;
-	-moz-border-radius-bottomleft: 20px;
-	-moz-border-radius-bottomright: 8px;
-	-moz-border-radius-topleft: 20px;
-	-moz-border-radius-topright: 8px;
-	-webkit-animation: move 2s linear infinite;
-	-webkit-background-size: 50px 50px;
-	-webkit-border-bottom-left-radius: 20px;
-	-webkit-border-bottom-right-radius: 8px;
-	-webkit-border-top-left-radius: 20px;
-	-webkit-border-top-right-radius: 8px;
-	border-bottom-left-radius: 20px;
-	border-bottom-right-radius: 8px;
-	border-top-left-radius: 20px;
-	border-top-right-radius: 8px;
-	overflow: hidden;
+@mixin keyframes($animationName) {
+    @-webkit-keyframes #{$animationName} {
+        @content;
+    }
+    @-moz-keyframes #{$animationName} {
+        @content;
+    }
+    @-o-keyframes #{$animationName} {
+        @content;
+    }
+    @keyframes #{$animationName} {
+        @content;
+    }
 }
 
-.animate > span:after {
-	display: none;
+.bottom-bg-color {
+	background-image: -webkit-linear-gradient(transparent, $yellow);
+	background-image: -moz-linear-gradient(transparent, $yellow);
+	background-image: -o-linear-gradient(transparent, $yellow);
+	@include animation( bottomflat 1.5s infinite alternate);
 }
 
-@-webkit-keyframes move {
-		0% {
-			 background-position: 0 0;
-		}
-		100% {
-			 background-position: 50px 50px;
-		}
+@include keyframes (bottomflat) {
+	100% {opacity: 0}
 }
-
-.red > span {
-	background-color: #f0a3a3;
-	background-image: -moz-linear-gradient(top, #f0a3a3, #f42323);
-	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #f0a3a3),color-stop(1, #f42323));
-	background-image: -webkit-linear-gradient(#f0a3a3, #f42323);
-}
-

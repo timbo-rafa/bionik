@@ -43,10 +43,11 @@ var host = (process.env.VCAP_APP_HOST || 'localhost');
 // The port on the DEA for communication with the application:
 var port = (process.env.VCAP_APP_PORT || 3000);
 
+    debug = (process.env.DEBUG || undefined);
 // Start server
 app.listen(port, host);
 cloudant.connect();
-console.log('App started on port ' + port);
+console.log('App started on', host + ':' + port);
 
 // error/info messages
 msg = '';
@@ -85,6 +86,40 @@ app.get('*', function(req, res, next) {
 	next();
 });
 
+//authentication and user session
+
+sessionInit = function(req, res, next) {
+  var userConfig = req.session.userConfig;
+  if (userConfig === undefined) {
+    userConfig = charts.newConfiguration();
+    //req.session.userConfig.defaultConfiguration();
+  }
+  if (typeof userConfig.starttime == 'string' || userConfig.starttime instanceof String)
+    userConfig.starttime = new Date(userConfig.starttime);
+  if (typeof userConfig.endtime == 'string' || userConfig.endtime instanceof String)
+    userConfig.endtime = new Date(userConfig.endtime);
+  //console.log('userConfig:', userConfig);
+	if (userConfig.starttime.toString() === "Invalid Date") {
+		console.log("Invalid Date for starttime");
+	}
+	if (userConfig.endtime.toString() === "Invalid Date") {
+		console.log("Invalid Date for endtime");
+	}
+  req.session.userConfig = userConfig;
+	console.log('session Init:',userConfig);
+	next();
+}
+
+function checkAuth(req, res, next) {
+  if (!req.session.user_id) {
+    res.send('You are not authorized to view this page');
+  } else {
+    next();
+  }
+}
+
+app.get('*', sessionInit); 
+app.post('*', sessionInit); 
 // first page
 
 app.get('/', function(req, res){

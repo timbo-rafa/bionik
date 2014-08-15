@@ -3,81 +3,50 @@ extends ../base
 block append body
 	if msg
 		span #{msg}
-	
-	div#configmenudiv
-		block menu
-			form#configform(name="configform", onsubmit='return false;')
-					div#periodradiodiv(data-role='fieldcontain')
-						span Each chart will represent the data of
-						br
-						|<input id='dayradiobutton' class='periodradiobuttons'
-						| type='radio' value='#{STRING.DAY}' name='period' 
-						| #{autofill.isDayRadioChecked}
-						| >
-						label(for='dayradiobutton') Day
-						br
-						| <input id='monthradiobutton' class='periodradiobuttons'
-						| type='radio' value='#{STRING.MONTH}' name='period' 
-						| #{autofill.isMonthRadioChecked}
-						| >
-						label(for='monthradiobutton') Month
-						br
-						|<input id='yearradiobutton' class='periodradiobuttons'
-						| type='radio' value='#{STRING.YEAR}' name='period' 
-						| #{autofill.isYearRadioChecked}
-						| >
-						label(for='yearradiobutton') Year
-						br
-						| <input id='allradiobutton' class='periodradiobuttons'
-						| type='radio' value='#{STRING.ALL}' name='period' 
-						| #{autofill.isAllRadioChecked}
-						| >
-						label(for='allradiobutton') Everything
 
-					div(data-role='fieldcontain')
-						label(for='startTimeDate') startTime:
-							input(id='startTimeDate', type='date', name='startTimeDate',
-							placeholder='yyyy-mm-dd')
-					
-						input(id='startTimeHour', type='time', name='startTimeHour',
+	header#header(class='header')
+		div#header-content-container(class='header-container')
+			div#logo-container(class='header-logo')
+				a#anchor-logo-img(class='header-logo-img')
+					div#div-logo-img(class='header-logo-img')
+				a#anchor-logo-text(class='header-logo-text')
+					div#div-logo-text(class='header-logo-text')
+			div#config-container(class='header-config')
+				ul#list-config(class='header-list')
+					li(class='period-li')
+						a(class='#{CLASS.DAY}') #{STRING.DAY}
+					li(class='period-li')
+						a(class='#{CLASS.MONTH}')	#{STRING.MONTH}
+					li(class='period-li')
+						a(class='#{CLASS.YEAR}')	#{STRING.YEAR}
+					li(class='period-li')
+						a(class='#{CLASS.ALL}')	#{STRING.ALL}
+					li(class='period-li')
+						//label(for='startTimeDate') startTime:
+						input(id='startTimeDate', type='date', name='startTimeDate', size='10',
+						placeholder='yyyy-mm-dd')
+						input(id='startTimeHour', type='time', name='startTimeHour', size='5',
 						placeholder='hh:mm')
-
-					div(data-role='fieldcontain')
-						label(for='endTimeDate') endTime:
-							input(id='endTimeDate', type='date', name='endTimeDate',
-							placeholder='yyyy-mm-dd')
-					
-						input(id='endTimeHour', type='time', name='endTimeHour',
+					li
+						//label(for='endTimeDate') endTime:
+						input(id='endTimeDate', type='date', name='endTimeDate', size='10',
+						placeholder='yyyy-mm-dd')
+						input(id='endTimeHour', type='time', name='endTimeHour', size='5',
 						placeholder='hh:mm')
+					li(class='method-li')
+						a(class='#{CLASS.SUM}') #{STRING.SUM}
+					li
+						span#resolution
+	div#body
 
-					span Method to apply to the data:
-					br
-					div(data-role='fieldcontain')
-						| <input id='sumradiobutton'  type='radio'  value='sum'
-						| name='method' #{autofill.isSumRadioChecked}>
-						label(for='sumradiobutton') Sum the data
+		div#chartdiv
 
-	div#ajax-info(class='info-box')
-		p#ajax-info-loading Updating the chart...
+		p#test
+	footer(class='footer')
+		block footer
+			div(class='info-box')
+				span#ajax-info-loading Loading. . .
+			div(class='bottom-bg-color')
 
-	div#chartdiv
-
-	block javascript
+	div#scripts
 		include ./display.js.jade
-
-	p#test
-//	form(name='ajaxForm')
-//		input(type='button', value='Ajax call' onclick='ajaxFunction()')
-//		input(type='text', name='testajax')
-//
-//	- each x in data
-//		ul
-//			li LS : #{x.LS}
-//			li RS : #{x.RS}
-//			li SS : #{x.SS}
-//			li SU : #{x.SU}
-//			li SD : #{x.SD}
-//			li docs processed : #{x.ndocs}
-//			li TS : #{x.TS}
-//			li newestTS: #{x.newestTS}
-//			li oldestTS: #{x.oldestTS}
