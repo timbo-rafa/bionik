@@ -1,0 +1,20 @@
+extends ../base
+
+block append body
+	//	p #{alldocs}
+	
+	h1#greetings Hello, #{fancyname}
+
+	p#instructions Please choose a patient:
+
+	form(method="get" action='/charts/')
+		select(class='patientselector', name='PN')
+			each docwrap in alldocs
+				if docwrap.doc.PN
+					option(value=docwrap.doc.PN)
+						= docwrap.doc.PN
+		input(type='submit')
+	
+
+block append scripts
+	script(src='/js/list.js')
