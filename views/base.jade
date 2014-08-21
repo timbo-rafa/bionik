@@ -5,4 +5,25 @@ html
 		block head
 			include head
 	body
+		header#header(class='header')
+			div#header-content-container(class='header-container')
+				block header
+					div#logo-container(class='header-logo')
+						a#anchor-logo-img(class='header-logo-img')
+							div#div-logo-img(class='header-logo-img')
+						a#anchor-logo-text(class='header-logo-text')
+							div#div-logo-text(class='header-logo-text')
 		block body
+			div#body
+			if msg 
+				span #{msg}
+		footer(class='footer')
+			block footer
+				div(class='info-box')
+					span#ajax-info-loading Loading. . . 
+				div(class='bottom-bg-color')
+	
+		p#test
+		div#scripts
+			script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')
+			block scripts

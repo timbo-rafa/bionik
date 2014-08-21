@@ -1,52 +1,46 @@
 extends ../base
 
-block append body
-	if msg
-		span #{msg}
+block append scripts
+	link(rel='stylesheet' href='//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/smoothness/jquery-ui.css')
+	script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')
+	script(src='//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js')
+	script(src='http://cdnjs.cloudflare.com/ajax/libs/gsap/1.13.1/TweenMax.min.js')
+	script(src='https://www.google.com/jsapi')
+	script(src='/js/display.js')
 
-	header#header(class='header')
-		div#header-content-container(class='header-container')
-			div#logo-container(class='header-logo')
-				a#anchor-logo-img(class='header-logo-img')
-					div#div-logo-img(class='header-logo-img')
-				a#anchor-logo-text(class='header-logo-text')
-					div#div-logo-text(class='header-logo-text')
-			div#config-container(class='header-config')
-				ul#list-config(class='header-list')
-					li(class='period-li')
-						a(class='#{CLASS.DAY}') #{STRING.DAY}
-					li(class='period-li')
-						a(class='#{CLASS.MONTH}')	#{STRING.MONTH}
-					li(class='period-li')
-						a(class='#{CLASS.YEAR}')	#{STRING.YEAR}
-					li(class='period-li')
-						a(class='#{CLASS.ALL}')	#{STRING.ALL}
-					li(class='period-li')
-						//label(for='startTimeDate') startTime:
-						input(id='startTimeDate', type='date', name='startTimeDate', size='10',
-						placeholder='yyyy-mm-dd')
-						input(id='startTimeHour', type='time', name='startTimeHour', size='5',
-						placeholder='hh:mm')
-					li
-						//label(for='endTimeDate') endTime:
-						input(id='endTimeDate', type='date', name='endTimeDate', size='10',
-						placeholder='yyyy-mm-dd')
-						input(id='endTimeHour', type='time', name='endTimeHour', size='5',
-						placeholder='hh:mm')
-					li(class='method-li')
-						a(class='#{CLASS.SUM}') #{STRING.SUM}
-					li
-						span#resolution
-	div#body
+block append header
+	div#logo-container(class='header-logo')
+		a#anchor-logo-img(class='header-logo-img')
+			div#div-logo-img(class='header-logo-img')
+		a#anchor-logo-text(class='header-logo-text')
+			div#div-logo-text(class='header-logo-text')
+	div#config-container(class='header-config')
+		ul#list-config(class='header-list')
+			li(class='period-li')
+				a(class='#{CLASS.DAY}', href='#') #{STRING.DAY}
+			li(class='period-li')
+				a(class='#{CLASS.MONTH}', href='#')	#{STRING.MONTH}
+			li(class='period-li')
+				a(class='#{CLASS.YEAR}', href='#')	#{STRING.YEAR}
+			li(class='period-li')
+				a(class='#{CLASS.ALL}', href='#')	#{STRING.ALL}
+			li(class='period-li')
+				//label(for='startTimeDate') startTime:
+				input(id='startTimeDate', type='date', name='startTimeDate', size='10',
+				placeholder='yyyy-mm-dd')
+				input(id='startTimeHour', type='time', name='startTimeHour', size='5',
+				placeholder='hh:mm')
+			li
+				//label(for='endTimeDate') endTime:
+				input(id='endTimeDate', type='date', name='endTimeDate', size='10',
+				placeholder='yyyy-mm-dd')
+				input(id='endTimeHour', type='time', name='endTimeHour', size='5',
+				placeholder='hh:mm')
+			li(class='method-li')
+				a(class='#{CLASS.SUM}', href='#') #{STRING.SUM}
+			li
+				span#resolution
+
+block append body
 
 		div#chartdiv
-
-		p#test
-	footer(class='footer')
-		block footer
-			div(class='info-box')
-				span#ajax-info-loading Loading. . .
-			div(class='bottom-bg-color')
-
-	div#scripts
-		include ./display.js.jade

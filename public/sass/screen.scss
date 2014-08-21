@@ -20,7 +20,7 @@ $info-dark-color : #ffdd22;//rgb(84,240,84);
 body {
   font-family: Lato, sans-serif;
   font-size: 1rem;
-  line-height: 100%;
+  line-height: 200%;
   color: $dark-gray;
   background: $gray;
   font-weight: 300;
@@ -31,7 +31,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  color: #fff;
   font-size: 2.2rem;
 }
 
@@ -225,6 +224,7 @@ div#body {
 }
 
 footer.footer {
+	line-height:100%;
 	position: fixed;
 	bottom:0;
 	height: 50px;
@@ -255,7 +255,7 @@ div.bottom-bg-color {
 }
 
 div#chartdiv {
-	overflow: auto;
+	overflow: hidden;
 }
 
 p.var, div.var {
