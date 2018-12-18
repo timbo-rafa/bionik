@@ -1,0 +1,9 @@
+FULLNAME = {
+	LS: 'Left step(s)',
+	RS: 'Right step(s)',
+	SS: 'Continuous step(s)',
+	SU: 'Sit down(s)',
+	SD: 'Stand up(s)',
+	TN: 'Trajectory number',
+	TS: 'Timestamp'
+};

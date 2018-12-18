@@ -1,0 +1,57 @@
+Hi, guys, my name is Rafael Timbo
+and besides being an intern at Big Data, I am also collaborating at Bionik Labs
+Bionik Laboratories is a medical device company uses technology to provide health care solutions
+for patients with restricted physical mobility.
+The project I am working on is the ARKE Exoskeleton, and I am responsible for gathering the
+data that comes from the device, store it on the cloud, and display it on a webserver.
+
+//But what is the ARKE exoskeleton?
+
+Maybe some of you have someone you know who is somehow disabled.
+They would like to do things on their own, but they often need assistance and find barriers and
+obstacles due to their physical condition.
+"Man, I forgot to get that lettuce on the supermarket.
+Maybe I can go to the mall closer to my house."
+But it happens to have that wicked set of stairs, which is unbearable.
+"Maybe I can stop at that subway station and go to that mall close by".
+But the station is not accessible. And you can not go.
+Not so cool.
+But this is where the Bionik exoskeleton comes in.
+You go to the hospital or clinic, attach the device to your body, and start your rehabilitation
+session. But it is not that calm session that the doctor tells the patient to move,
+which he can do with a lot of effort. It is
+a real walking session. What you can not do,
+the exoskeleton will be there to cover that up for you.
+And this is important for the patient. The session will never be a failure, because the device
+will support the person wherever it is needed. This greatly impacts the psychological of the
+patient, giving him fuel and stimulation to continue.
+
+The doctor can use a tablet to send commands to the device for the rehabilitation process.
+The ARKE exoskeleton is a lower body exoskeleton that gives people their independence back.
+Through sensors and algorithms, it is able to learn and anticipate an individual's
+walking pattern. Then, it uses motors to replace the function of muscles and creates movement.
+
+For example, say the damage was not so bad and I can recover my leg movement
+following a rehabilitation treatment.
+This is the case of X.
+She visits the doctor once a day and wears the exoskeleton.
+She does the rehabilitation really walking, not simulating walking movements laid down on the bed
+or sat down. The best stimulation a patient could get.
+And here you can see all
+that she did. This way, the doctors can see her progress.
+As you can see,
+she started on January and went all the way to March and followed the prescription.
+You can see how many steps she did throughout her whole rehabilitation process, or month by month
+
+Further ahead,
+the patients would be able to take the device home, and use the device to its full capability.
+Say Joe did that.
+He started great and was enjoying fully the device everyday.
+Like so, we can measure how many steps does the battery last.
+For example, here, on January 2nd, the battery was able to deliver 2000 LS, 1000 RS.
+But on 8th of February, we can see that he might be walking a little too much
+on his right leg. This can show that he might be having difficulties using the device, or 
+he is not comfortable. It could also show that the left leg might be malfunctioning.
+Say at the end, the device was not fully functional anymore.
+Like so, we can compute how many steps it did throughout its whole lifespan
+and have an idea of the device's performance.

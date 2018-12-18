@@ -1,0 +1,23 @@
+header .header-logo {
+  width: 15.25424%;
+  float: left;
+  margin-right: 1.69492%;
+  height: 85px;
+  float: none;
+  margin-left: 1em;
+  background: url('../../images/Logo-icon.svg?1396633680');
+  background-repeat: no-repeat;
+  background-position: center center;
+  -moz-background-size: 80% 80%;
+  -o-background-size: 80% 80%;
+  -webkit-background-size: 80% 80%;
+  background-size: 80% 80%;
+}
+@media (min-width: 65em) {
+  /* line 82, ../components/sass/_layout.scss */
+  header .header-logo {
+    float: left;
+    height: 75px;
+    margin-left: 0;
+  }
+}

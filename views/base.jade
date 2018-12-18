@@ -20,7 +20,10 @@ html
 		footer(class='footer')
 			block footer
 				div(class='info-box')
-					span#ajax-info-loading Loading. . . 
+						if msg
+							span#ajax-info-loading #{msg}
+						else
+							span#ajax-info-loading #{msg} Loading. . . 
 				div(class='bottom-bg-color')
 	
 		p#test

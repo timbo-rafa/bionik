@@ -120,7 +120,7 @@ function getOptions() {
 			bottom: 0,
 			height: '100%'
 		},
-		title: 'Statistics from patient ' + toTitleCase(config.patient),
+		title: config.patient + ' statistics',
 		titleTextStyle: textStyle,
 		textStyle: textStyle,
 		fontSize: 18,
@@ -198,10 +198,6 @@ Date.prototype.getMonthTwoDigits = function() {
 	return mStr;
 }
 
-function toTitleCase(str) {
-	return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-}
-
 DATESEPARATOR = '-';
 function dateFormatdmy(date) {
 	return date.getDateTwoDigits() + DATESEPARATOR + date.getMonthTwoDigits()
@@ -228,11 +224,11 @@ function init() {
 $().ready(function() {
 	now = new Date();
 	$('#endTimeDate').val(dateFormatymd(now));
-	//$('#endTimeHour').val(timeFormat(now));
+	$('#endTimeHour').val(timeFormat(now));
 	console.log(now,'as', dateFormatymd(now));
 	now.setFullYear(now.getFullYear(), now.getMonth() - 1);
-	//$('#startTimeDate').val(dateFormatymd(now));
-	//$('#startTimeHour').val(timeFormat(now));
+	$('#startTimeDate').val(dateFormatymd(now));
+	$('#startTimeHour').val(timeFormat(now));
 
 	// Event Handlers
 	$('#startTimeDate, #startTimeHour').keyup(function(e) {
@@ -273,9 +269,9 @@ $().ready(function() {
 		updateCharts("method", e.target.text.replace(/\s+/g, ''));
 	});
 
-	//$('#resolution').text('w' + $(window).width() + 'x' + $(window).height() + 'h');
+	$('#resolution').text('w' + $(window).width() + 'x' + $(window).height() + 'h');
 	$(window).resize(function(e) {
 		var resinfo = 'w' + $(window).width() + 'x' + $(window).height() + 'h';
-		//$('#resolution').text(resinfo);
+		$('#resolution').text(resinfo);
 	});
 });

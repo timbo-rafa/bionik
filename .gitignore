@@ -1,0 +1,7 @@
+start.sh
+old/
+bionik.zip
+gitRafael.txt
+*.swp
+out.txt
+.sass-cache

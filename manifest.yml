@@ -1,9 +1,12 @@
 applications:
 - disk_quota: 1024M
-  host: bionik
-  name: bionik
+  host: bionikbluemix
+  name: bionikbluemix
   command: node app.js
   path: .
   domain: mybluemix.net
+  env:
+    CLOUDANT_PASSWORD: bionik2014ibminternship
+    CLOUDANT_USERNAME: bionikbluemix
   instances: 1
   memory: 128M

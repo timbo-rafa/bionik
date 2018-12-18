@@ -1,5 +1,5 @@
 alias r='clear && clear && unset VCAP_APP_HOST && node app.js'
-alias rs='clear && clear && export VCAP_APP_HOST="0.0.0.0" && node app.js || notify-send NodeJS "crashed"'
+alias rs='clear && clear && export VCAP_APP_HOST="0.0.0.0" && node app.js'
 alias debug='export DEBUG="true"'
 debug
 alias env.sh='vim /home/rafael/env.sh'

@@ -1,0 +1,17 @@
+			//				animation: {
+			//					duration: 2000,
+			//					easing  : 'out'
+			//				},
+			//				//not sure what annotations are
+			//				annotations: {
+			//					textStyle: textStyle,
+			//					boxStyle: {
+			//						stroke: '#D32043',
+			//						strokeWidth: 1,
+			//						rx: 2,
+			//						ry: 2
+			//					}
+			//				},
+			//				bar: {
+			//					groupWidth: '61.8%'
+			//				},
